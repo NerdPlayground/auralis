@@ -1,0 +1,41 @@
+// set dimensions
+@mixin dimensions($width:fit-content,$max-width:fit-content,$height:fit-content,$max-height:fit-content){
+    width: $width;
+    max-width: $max-width;
+    height: $height;
+    max-height: $max-height;
+}
+
+// set flexbox properties
+@mixin flex($direction,$align:stretch,$justify:flex-start){
+    display: flex;
+    flex-direction: $direction;
+    align-items: $align;
+    justify-content: $justify;
+}
+
+// set text properties
+@mixin text($size,$line,$font-family,$color,$font-weight:normal){
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    overflow: hidden;
+    color: $color;
+    font-size: $size;
+    line-height: $line;
+    font-weight: $font-weight;
+    font-family: $font-family,monospace;
+}
+
+// set background image
+@mixin backgroundImage($url){
+    background-size: cover;
+    background-image: url($url);
+    background-position: center;
+}
+
+// set border
+@mixin border($color:#333333,$width:1px,$style:solid){
+    border: $width $style $color;
+}
