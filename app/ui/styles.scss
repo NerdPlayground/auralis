@@ -10,6 +10,8 @@
 :root{
     --white: #f5f5f5;
     --black: #333333;
+    --red: #A80000;
+    --green: #006100;
 }
 
 body{
@@ -21,4 +23,50 @@ body{
 #root{
     @include flex(column,center,center);
     @include dimensions(100%,1500px,100%,100%);
+    .button{
+        cursor: pointer;
+        padding: 10px;
+        margin-bottom: 25px;
+        @include dimensions(200px,200px);
+        font-size: 18px;
+        color: var(--black);
+        border-radius: 5px;
+        background-color: var(--white);
+        @include border(var(--black),2px);
+        &:hover{
+            color: var(--white);
+            background-color: var(--black);
+        }
+    }
+    a{
+        text-align: center;
+        text-decoration: none;
+    }
+    .error{
+        color: var(--white);
+        border-color: var(--red);
+        background-color: var(--red);
+        &:hover{
+            border-color: var(--black);
+        }
+    }
+    .info{
+        color: var(--white);
+        border-color: var(--green);
+        background-color: var(--green);
+        &:hover{
+            border-color: var(--black);
+        }
+    }
+    .message{
+        $size: 16px;
+        @include text($size,$size,monospace,var(--black),bold);
+        @include dimensions(fit-content,fit-content,40px,40px);
+    }
+    .error-message{
+        color: var(--red);
+    }
+    .info-message{
+        color: var(--green);
+    }
 }
