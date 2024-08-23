@@ -5,7 +5,7 @@ import { robotoCondensed } from "@/app/ui/fonts";
 import { handleAuthorization, handleUserPlaylist } from "@/app/lib/actions";
 
 export default function Root(){
-    const accessToken=useLocalStorage();
+    const spotifyPackage=useLocalStorage();
     const [isPending, startTransition]=useTransition();
 
     return (
@@ -15,13 +15,13 @@ export default function Root(){
                 className={`${robotoCondensed.className} button`}
                 onClick={()=>{
                     startTransition(()=>{
-                        if(accessToken) handleUserPlaylist();
-                        else handleAuthorization();
+                        if(!spotifyPackage) handleAuthorization();
+                        else handleUserPlaylist(spotifyPackage);
                     });
                 }}
             >{
                 isPending? `Loading...` : 
-                accessToken? `Get User Playlist`:`Authorize Application`
+                spotifyPackage? `Get User Playlist`:`Authorize Application`
             }</button>
             <p className="message"></p>
         </>
