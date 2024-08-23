@@ -44,8 +44,9 @@ export async function getAccessToken({code, state}){
         },
     });
 
+    const results=await response.json();
     if(!response.ok){
-        const {error,error_description}=JSON.parse(await response.text());
+        const {error,error_description}=results;
         console.log("==================================================");
         console.log(`Error: ${error}`);
         console.log(`Error Description: ${error_description}`);
@@ -56,7 +57,6 @@ export async function getAccessToken({code, state}){
         };
     }
 
-    const results=await response.json();
     return {
         success: true,
         access_token: results.access_token,
