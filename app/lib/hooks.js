@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 
-export function useLocalStorage(){
-    const [stored, setStored]=useState("");
+export function useLocalStorage(key){
+    const [storedItem, setStoredItem]=useState("");
 
     useEffect(()=>{
-        const spotifyPackage=localStorage.getItem("spotify-package");
-        if(spotifyPackage) setStored(spotifyPackage);
-    },[]);
+        const item=localStorage.getItem(key);
+        if(item) setStoredItem(item);
+    },[key]);
 
-    return stored;
+    return storedItem;
 }
