@@ -23,20 +23,26 @@ body{
 #root{
     @include flex(column,center,center);
     @include dimensions(100%,1500px,100%,100%);
+    .label,
     .button{
-        cursor: pointer;
         padding: 10px;
-        margin-bottom: 25px;
         @include dimensions(200px,200px);
         font-size: 18px;
+        text-align: center;
         color: var(--black);
         border-radius: 5px;
         background-color: var(--white);
         @include border(var(--black),2px);
+    }
+    .button{
+        cursor: pointer;
         &:hover{
             color: var(--white);
             background-color: var(--black);
         }
+    }
+    .disabled-button{
+        cursor: not-allowed;
     }
     a{
         text-align: center;
@@ -60,13 +66,38 @@ body{
     }
     .message{
         $size: 16px;
+        @include flex(column,center,center);
         @include text($size,$size,monospace,var(--black),bold);
-        @include dimensions(fit-content,fit-content,40px,40px);
+        @include dimensions(200px,200px);
     }
     .error-message{
         color: var(--red);
     }
     .info-message{
         color: var(--green);
+    }
+}
+
+#container{
+    @include dimensions();
+    border-radius: 10px;
+    @include border(var(--black),2px);
+    @include flex(column,center,center);
+    .container{
+        padding: 5px;
+        border-bottom: 2px dashed var(--black);
+    }
+    #menu{
+        @include flex(column,center,center);
+        .button{
+            margin-bottom: 5px;
+            &:last-child{
+                margin-bottom: 0px;
+            }
+        }
+    }
+    #messages{
+        padding-block: 10px;
+        border-bottom: none;
     }
 }
