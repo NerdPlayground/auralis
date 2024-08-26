@@ -9,7 +9,7 @@ export default function Page({ searchParams }){
     const initialState=Object.freeze({
         status: false,
         error: false,
-        content: null,
+        content: "-_-",
     });
     const [message, setMessage]=useState(initialState);
     const [spotifyParams, setParams]=useState(null);
@@ -36,11 +36,11 @@ export default function Page({ searchParams }){
         setParams({code, state});
 
     },[searchParams]);
-
+    
     return (
-        <>
-            {message.status?(
-                <>
+        <div id="container">
+            <div id="menu" className="container">
+                {message.status?(
                     <Link
                         id="authorize-button" href="/"
                         className={`
@@ -51,17 +51,7 @@ export default function Page({ searchParams }){
                     >
                         Go Back Home
                     </Link>
-                    <p
-                        className={`
-                            message
-                            ${message.error? "error-message" : "info-message"}
-                        `}
-                    >
-                        {message.content}
-                    </p>
-                </>
-            ):(
-                <>
+                ):(
                     <Button
                         active={true}
                         label={`Get Access Token`}
@@ -78,9 +68,13 @@ export default function Page({ searchParams }){
                         }}
                         setMessage={setMessage}
                     />
-                    <p className="message"></p>
-                </>
-            )}
-        </>
+                )}
+            </div>
+            <div id="messages" className="container">
+                <p className={`message ${message.error?"error":"info"}-message`}>
+                    {message.content}
+                </p>
+            </div>
+        </div>
     );
 }
