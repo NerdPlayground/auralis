@@ -4,51 +4,10 @@ import {
     handleUserPlaylist, 
     refreshAccessToken 
 } from "@/app/lib/actions";
-import { useState, useEffect, useTransition } from "react";
+import { useState } from "react";
+import Button from "@/app/components/button";
 import { useLocalStorage } from "@/app/lib/hooks";
 import { robotoCondensed } from "@/app/ui/fonts";
-
-function Button({ label, active, action, reaction, setMessage }){
-    const [isPending, startTransition]=useTransition();
-    const buttonClasses=[
-        "button",
-        robotoCondensed.className,
-        `${active? "":"disabled-button"}`,
-    ];
-
-    return (
-        <button
-            disabled={!active}
-            className={buttonClasses.join(" ")}
-            onClick={()=>{
-                startTransition(async ()=>{
-                    const args=action?.arguments;
-                    let response=(!args? 
-                        await action.method():
-                        await action.method(...args)
-                    );
-                    
-                    if(!response.success){
-                        setMessage({
-                            status: true, error: true,
-                            type: response?.type,
-                            content:response.message
-                        });
-                        return;
-                    }
-                    
-                    if(reaction) reaction(response);
-                    setMessage({
-                        content: "Success :)",
-                        status: true, error: false,
-                    });
-                });
-            }}
-        >{
-            isPending? `Loading...` : label
-        }</button>
-    );
-}
 
 function Auth({ item, message, setMessage, refresh_token }){
     return (

@@ -69,4 +69,6 @@ export async function refreshAccessToken(){
 }
 
 export async function handleUserPlaylist(){
+    console.log("HERE TF I AM");
+    return { success: true };
 }

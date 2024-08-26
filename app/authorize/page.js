@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import Button from "@/app/components/button";
 import { robotoCondensed } from "@/app/ui/fonts";
 import { getAccessToken } from "@/app/lib/actions";
-import { useEffect, useState, useTransition } from "react";
 
 export default function Page({ searchParams }){
     const initialState=Object.freeze({
@@ -12,7 +13,6 @@ export default function Page({ searchParams }){
     });
     const [message, setMessage]=useState(initialState);
     const [spotifyParams, setParams]=useState(null);
-    const [isPending, startTransition]=useTransition();
 
     useEffect(()=>{
         const spError=searchParams["error"];
@@ -62,35 +62,22 @@ export default function Page({ searchParams }){
                 </>
             ):(
                 <>
-                    <button
-                        id="authorize-button"
-                        className={`${robotoCondensed.className} button`}
-                        onClick={()=>{
-                            startTransition(async()=>{
-                                const response=await getAccessToken(spotifyParams);
-                                if(!response.success) {
-                                    setMessage({
-                                        status: true, error: true,
-                                        content: response.message,
-                                    });
-                                    return;
-                                }
-
-                                const { access_token, refresh_token, expires_in }=response;
-                                localStorage.setItem(
-                                    "spotify-package",
-                                    `${access_token} | ${refresh_token} | ${expires_in}`
-                                );
-                                
-                                setMessage({
-                                    status: true, error: false,
-                                    content: "The application has been authorized successfully :)"
-                                });
-                            });
+                    <Button
+                        active={true}
+                        label={`Get Access Token`}
+                        action={{
+                            method: getAccessToken,
+                            arguments: [spotifyParams],
                         }}
-                    >{
-                        isPending? `Loading...`:`Get Access Token`
-                    }</button>
+                        reaction={(response)=>{
+                            const { access_token, refresh_token, expires_in }=response;
+                            localStorage.setItem(
+                                "spotify-package",
+                                `${access_token} | ${refresh_token} | ${expires_in}`
+                            );
+                        }}
+                        setMessage={setMessage}
+                    />
                     <p className="message"></p>
                 </>
             )}
