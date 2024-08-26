@@ -49,7 +49,7 @@ export async function getAccessToken({code, state}){
         const {error,error_description}=results;
         console.log("==================================================");
         console.log(`Error: ${error}`);
-        console.log(`Error Description: ${error_description}`);
+        console.log(`Description: ${error_description}`);
         console.log("==================================================");
         return {
             success: false,
@@ -65,10 +65,47 @@ export async function getAccessToken({code, state}){
     };
 }
 
-export async function refreshAccessToken(){
+export async function refreshAccessToken(refresh_token){
+    const
+        client_id=process.env.CLIENT_ID,
+        response=await fetch("https://accounts.spotify.com/api/token",{
+            method: "POST",
+            headers:{
+                'content-type':'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                grant_type: "refresh_token",
+                client_id: client_id,
+                refresh_token: refresh_token,
+            }),
+        });
+
+    const results=await response.json();
+    if(!response.ok){
+        const {error,error_description}=results;
+        console.log("==================================================");
+        console.log(`Error: ${error}`);
+        console.log(`Description: ${error_description}`);
+        console.log("==================================================");
+
+        let res_object={
+            success: false, type: null,
+            message: "There was an error in processing your request. Contact support",
+        }
+        if(error==="invalid_grant"){
+            res_object.type="403";
+            res_object.message="The application access has been revoked. Please re-authorize"
+        };
+        return res_object;
+    }
+
+    return {
+        success: true,
+        access_token: results.access_token,
+        refresh_token: results.refresh_token,
+        expires_in: results.expires_in,
+    };
 }
 
 export async function handleUserPlaylist(){
-    console.log("HERE TF I AM");
-    return { success: true };
 }

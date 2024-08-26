@@ -11,7 +11,7 @@ import { robotoCondensed } from "@/app/ui/fonts";
 
 function Auth({ item, message, setMessage, refresh_token }){
     return (
-        item===""?(
+        (item==="" || (message.error && message.type==="403"))?(
             <Button
                 active={true}
                 label={`Authorize Application`}
