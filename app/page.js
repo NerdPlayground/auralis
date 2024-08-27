@@ -24,7 +24,7 @@ function Auth({ item, message, setMessage, refresh_token }){
         (message.error && message.type==="401")?(
             <Button
                 active={true}
-                label={`Get Access Token`}
+                label={`Refresh Access Token`}
                 action={{
                     method: refreshAccessToken,
                     arguments: [refresh_token],
