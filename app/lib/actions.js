@@ -90,16 +90,16 @@ export async function refreshAccessToken(refresh_token){
         console.log(`Error: ${error}`);
         console.log(`Description: ${error_description}`);
         console.log("==================================================");
-
-        let res_object={
+        
+        if(error==="invalid_grant") return {
+            success: false, type: "400",
+            message: "The application access has been revoked. Please re-authorize",
+        };
+        
+        return {
             success: false, type: null,
             message: "There was an error in processing your request. Contact support",
-        }
-        if(error==="invalid_grant"){
-            res_object.type="403";
-            res_object.message="The application access has been revoked. Please re-authorize"
         };
-        return res_object;
     }
 
     return {
