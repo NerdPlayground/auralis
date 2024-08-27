@@ -68,17 +68,20 @@ export async function getAccessToken({code, state}){
 export async function refreshAccessToken(refresh_token){
     const
         client_id=process.env.CLIENT_ID,
-        response=await fetch("https://accounts.spotify.com/api/token",{
-            method: "POST",
-            headers:{
-                'content-type':'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                grant_type: "refresh_token",
-                client_id: client_id,
-                refresh_token: refresh_token,
-            }),
-        });
+        client_secret=process.env.CLIENT_SECRET,
+        authorization=new Buffer.from(`${client_id}:${client_secret}`).toString('base64');
+    
+    const response=await fetch("https://accounts.spotify.com/api/token",{
+        method: "POST",
+        headers:{
+            'Authorization': `Basic ${authorization}`,
+            'content-type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            grant_type: "refresh_token",
+            refresh_token: refresh_token,
+        }),
+    });
 
     const results=await response.json();
     if(!response.ok){
