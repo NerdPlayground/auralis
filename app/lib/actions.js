@@ -1,6 +1,15 @@
 "use server";
 import { redirect } from 'next/navigation'
 
+function errorDescription(status){
+    switch(status){
+        case 401: return "Your access token has expired. Please get a new one";
+        case 403: return "You can't perform this action. Please contact support";
+        case 429: return "You have made too many requests. Please try again later";
+        default: return "There was an error in processing your request. Contact support";
+    }
+}
+
 export async function handleAuthorization(){
     const SCOPES=Object.freeze([
         "playlist-modify-public",
@@ -95,7 +104,7 @@ export async function refreshAccessToken(refresh_token){
             success: false, type: "400",
             message: "The application access has been revoked. Please re-authorize",
         };
-        
+
         return {
             success: false, type: null,
             message: "There was an error in processing your request. Contact support",
