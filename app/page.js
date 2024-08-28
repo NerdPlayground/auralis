@@ -41,7 +41,7 @@ function Auth({ item, message, setMessage, refresh_token }){
         ):
         (
             <p className={`${robotoCondensed.className} label`}>
-                {`Have Fun 😉`}
+                {`${message.error?"Oh no 😞":"Enjoy 😉"}`}
             </p>
         )
     );

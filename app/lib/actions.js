@@ -32,7 +32,7 @@ export async function handleAuthorization(){
 export async function getAccessToken({code, state}){
     if(process.env.STATE!==state) return {
         success: false,
-        message: "The state provided does not match the application's state :(",
+        message: "The state provided does not match the application's state. Use the appropriate authorization flow",
     };
 
     const 
@@ -60,9 +60,15 @@ export async function getAccessToken({code, state}){
         console.log(`Error: ${error}`);
         console.log(`Description: ${error_description}`);
         console.log("==================================================");
+        
+        if(error==="invalid_grant") return {
+            success: false, type: "400",
+            message: "The application access has been revoked. Please re-authorize",
+        };
+
         return {
             success: false,
-            message: "There was an error in processing your request :(",
+            message: "There was an error in processing your request. Contact support",
         };
     }
 
