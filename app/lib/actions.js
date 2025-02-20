@@ -92,4 +92,26 @@ export async function refreshAccessToken(refresh_token){
 }
 
 export async function handleUserPlaylist(access_token){
+    const response=await fetch("https://api.spotify.com/v1/me/player/currently-playing",{
+        headers:{
+            "Authorization": `Bearer ${access_token}`,
+        }
+    });
+
+    const results=!response.body? null: await response.json();
+    if(!response.ok){
+        const {status,message}=results.error;
+        console.log("==================================================");
+        console.log(`Error: ${status}`);
+        console.log(`Description: ${message}`); 
+        console.log("==================================================");
+
+        return{
+            success: false, type: `${status}`,
+            message: errorDescription(status),
+        }
+    }
+
+    console.log(results?.item?.album.name ?? "NOTHING IS PLAYING");
+    return{ success: true, };
 }
