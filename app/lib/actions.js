@@ -1,6 +1,15 @@
 "use server";
 import { redirect } from 'next/navigation'
 
+function errorDescription(status){
+    switch(status){
+        case 401: return "Your access token has expired. Please get a new one";
+        case 403: return "You can't perform this action. Please contact support";
+        case 429: return "You have made too many requests. Please try again later";
+        default: return "There was an error in processing your request. Contact support";
+    }
+}
+
 export async function handleAuthorization(){
     const SCOPES=Object.freeze([
         "playlist-modify-public",
@@ -20,12 +29,7 @@ export async function handleAuthorization(){
     redirect(`https://accounts.spotify.com/authorize?${url_params}`);
 }
 
-export async function getAccessToken({code, state}){
-    if(process.env.STATE!==state) return {
-        success: false,
-        message: "The state provided does not match the application's state :(",
-    };
-
+async function handleAccessToken(body){
     const 
         client_id=process.env.CLIENT_ID,
         client_secret=process.env.CLIENT_SECRET,
@@ -33,11 +37,7 @@ export async function getAccessToken({code, state}){
 
     const response=await fetch("https://accounts.spotify.com/api/token",{
         method: "POST",
-        body: new URLSearchParams({
-            code:code,
-            grant_type:"authorization_code",
-            redirect_uri:"http://localhost:3000/authorize",
-        }),
+        body: body,
         headers:{
             "Authorization":`Basic ${authorization}`,
             "content-type":"application/x-www-form-urlencoded",
@@ -51,9 +51,15 @@ export async function getAccessToken({code, state}){
         console.log(`Error: ${error}`);
         console.log(`Description: ${error_description}`);
         console.log("==================================================");
+        
+        if(error==="invalid_grant") return {
+            success: false, type: "400",
+            message: "The application access has been revoked. Please re-authorize",
+        };
+
         return {
             success: false,
-            message: "There was an error in processing your request :(",
+            message: "There was an error in processing your request. Contact support",
         };
     }
 
@@ -63,49 +69,49 @@ export async function getAccessToken({code, state}){
         refresh_token: results.refresh_token,
         expires_in: results.expires_in,
     };
+}
+
+export async function getAccessToken({code, state}){
+    if(process.env.STATE!==state) return {
+        success: false,
+        message: "The state provided does not match the application's state. Use the appropriate authorization flow",
+    };
+
+    return handleAccessToken(new URLSearchParams({
+        code:code,
+        grant_type:"authorization_code",
+        redirect_uri:"http://localhost:3000/authorize",
+    }));
 }
 
 export async function refreshAccessToken(refresh_token){
-    const
-        client_id=process.env.CLIENT_ID,
-        response=await fetch("https://accounts.spotify.com/api/token",{
-            method: "POST",
-            headers:{
-                'content-type':'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                grant_type: "refresh_token",
-                client_id: client_id,
-                refresh_token: refresh_token,
-            }),
-        });
-
-    const results=await response.json();
-    if(!response.ok){
-        const {error,error_description}=results;
-        console.log("==================================================");
-        console.log(`Error: ${error}`);
-        console.log(`Description: ${error_description}`);
-        console.log("==================================================");
-
-        let res_object={
-            success: false, type: null,
-            message: "There was an error in processing your request. Contact support",
-        }
-        if(error==="invalid_grant"){
-            res_object.type="403";
-            res_object.message="The application access has been revoked. Please re-authorize"
-        };
-        return res_object;
-    }
-
-    return {
-        success: true,
-        access_token: results.access_token,
-        refresh_token: results.refresh_token,
-        expires_in: results.expires_in,
-    };
+    return handleAccessToken(new URLSearchParams({
+        grant_type: "refresh_token",
+        refresh_token: refresh_token,
+    }));
 }
 
-export async function handleUserPlaylist(){
+export async function getCurrentlyPlaying(access_token){
+    const response=await fetch("https://api.spotify.com/v1/me/player/currently-playing",{
+        headers:{
+            "Authorization": `Bearer ${access_token}`,
+        }
+    });
+
+    const results=!response.body? null: await response.json();
+    if(!response.ok){
+        const {status,message}=results.error;
+        console.log("==================================================");
+        console.log(`Error: ${status}`);
+        console.log(`Description: ${message}`); 
+        console.log("==================================================");
+
+        return{
+            success: false, type: `${status}`,
+            message: errorDescription(status),
+        }
+    }
+    
+    console.log(results?.item?.name ?? "NOTHING IS PLAYING");
+    return{ success: true, };
 }

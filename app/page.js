@@ -1,7 +1,7 @@
 "use client";
 import { 
     handleAuthorization, 
-    handleUserPlaylist, 
+    getCurrentlyPlaying, 
     refreshAccessToken 
 } from "@/app/lib/actions";
 import { useState } from "react";
@@ -11,7 +11,7 @@ import { robotoCondensed } from "@/app/ui/fonts";
 
 function Auth({ item, message, setMessage, refresh_token }){
     return (
-        (item==="" || (message.error && message.type==="403"))?(
+        (item==="" || (message.error && message.type==="400"))?(
             <Button
                 active={true}
                 label={`Authorize Application`}
@@ -24,7 +24,7 @@ function Auth({ item, message, setMessage, refresh_token }){
         (message.error && message.type==="401")?(
             <Button
                 active={true}
-                label={`Get Access Token`}
+                label={`Refresh Access Token`}
                 action={{
                     method: refreshAccessToken,
                     arguments: [refresh_token],
@@ -41,7 +41,7 @@ function Auth({ item, message, setMessage, refresh_token }){
         ):
         (
             <p className={`${robotoCondensed.className} label`}>
-                {`Have Fun 😉`}
+                {`${message.error?"Oh no 😞":"Enjoy 😉"}`}
             </p>
         )
     );
@@ -60,8 +60,8 @@ export default function Root(){
 
     const menuItems=Object.freeze([
         {
-            label: "Turn Queue to Playlist",
-            method: handleUserPlaylist,
+            label: "Get Currently Playing",
+            method: getCurrentlyPlaying,
             arguments: [access_token],
         },
     ]);
