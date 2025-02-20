@@ -111,7 +111,7 @@ export async function getCurrentlyPlaying(access_token){
             message: errorDescription(status),
         }
     }
-
-    console.log(results?.item?.album.name ?? "NOTHING IS PLAYING");
+    
+    console.log(results?.item?.name ?? "NOTHING IS PLAYING");
     return{ success: true, };
 }
