@@ -1,7 +1,7 @@
 "use client";
 import { 
     handleAuthorization, 
-    handleUserPlaylist, 
+    getCurrentlyPlaying, 
     refreshAccessToken 
 } from "@/app/lib/actions";
 import { useState } from "react";
@@ -60,8 +60,8 @@ export default function Root(){
 
     const menuItems=Object.freeze([
         {
-            label: "Turn Queue to Playlist",
-            method: handleUserPlaylist,
+            label: "Get Currently Playing",
+            method: getCurrentlyPlaying,
             arguments: [access_token],
         },
     ]);

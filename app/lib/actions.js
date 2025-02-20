@@ -91,7 +91,7 @@ export async function refreshAccessToken(refresh_token){
     }));
 }
 
-export async function handleUserPlaylist(access_token){
+export async function getCurrentlyPlaying(access_token){
     const response=await fetch("https://api.spotify.com/v1/me/player/currently-playing",{
         headers:{
             "Authorization": `Bearer ${access_token}`,
