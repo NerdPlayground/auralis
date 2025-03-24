@@ -1,4 +1,5 @@
-@import "functions.scss";
+@use "colors.scss" as *;
+@use "functions.scss" as *;
 
 *{
     margin: 0px;
@@ -7,15 +8,8 @@
     -webkit-tap-highlight-color: transparent;
 }
 
-:root{
-    --white: #f5f5f5;
-    --black: #333333;
-    --red: #A80000;
-    --green: #006100;
-}
-
 body{
-    background-color: var(--white);
+    background-color: $white;
     @include flex(column,center,center);
     @include dimensions(100vw,100vw,100vh,100vh);
 }
@@ -30,17 +24,17 @@ body{
     @include dimensions(200px,200px);
     font-size: 18px;
     text-align: center;
-    color: var(--black);
+    color: $black;
     border-radius: 5px;
-    background-color: var(--white);
-    @include border(var(--black),2px);
+    background-color: $white;
+    @include border($black,2px);
 }
 
 .button{
     cursor: pointer;
     &:hover{
-        color: var(--white);
-        background-color: var(--black);
+        color: $white;
+        background-color: $black;
     }
 }
 
@@ -54,48 +48,48 @@ a{
 }
 
 .error{
-    color: var(--white);
-    border-color: var(--red);
-    background-color: var(--red);
+    color: $white;
+    border-color: $red;
+    background-color: $red;
     &:hover{
-        border-color: var(--black);
+        border-color: $black;
     }
 }
 
 .info{
-    color: var(--white);
-    border-color: var(--green);
-    background-color: var(--green);
+    color: $white;
+    border-color: $green;
+    background-color: $green;
     &:hover{
-        border-color: var(--black);
+        border-color: $black;
     }
 }
 
 .message{
     $size: 16px;
     @include flex(column,center,center);
-    @include text($size,$size,monospace,var(--black),bold);
+    @include text($size,$size,monospace,$black,bold);
     @include dimensions(200px,200px);
 }
 
 .error-message{
-    color: var(--red);
+    color: $red;
 }
 
 .info-message{
-    color: var(--green);
+    color: $green;
 }
 
 #container{
     @include dimensions();
     border-radius: 10px;
-    @include border(var(--black),2px);
+    @include border($black,2px);
     @include flex(column,center,center);
 }
 
 .container{
     padding: 5px;
-    border-bottom: 2px dashed var(--black);
+    border-bottom: 2px dashed $black;
 }
 
 #menu{
