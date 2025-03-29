@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Button from "@/app/components/button";
 import { robotoCondensed } from "@/app/ui/fonts";
 import { getAccessToken } from "@/app/lib/actions";
@@ -15,7 +15,8 @@ export default function Page({ searchParams }){
     const [spotifyParams, setParams]=useState(null);
 
     useEffect(()=>{
-        const spError=searchParams["error"];
+        const params=use(searchParams);
+        const spError=params["error"];
         if(spError){
             setMessage({
                 status: true, error: true, 
@@ -24,7 +25,7 @@ export default function Page({ searchParams }){
             return;
         }
 
-        const {code,state}=searchParams;
+        const {code,state}=params;
         if(code===undefined || state===undefined){
             setMessage({
                 status: true, error: true, 
@@ -49,7 +50,7 @@ export default function Page({ searchParams }){
                             button
                         `}
                     >
-                        Go Back Home
+                        {`Go Back Home`}
                     </Link>
                 ):(
                     <Button
