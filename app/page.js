@@ -8,6 +8,7 @@ import { useState } from "react";
 import Button from "@/app/components/button";
 import { useLocalStorage } from "@/app/lib/hooks";
 import { robotoCondensed } from "@/app/ui/fonts";
+import { redirect } from "next/navigation";
 
 function Auth({ item, message, setMessage, refresh_token }){
     return (
@@ -36,6 +37,7 @@ function Auth({ item, message, setMessage, refresh_token }){
                         "spotify-package",
                         `${access_token} | ${refresh_token} | ${expires_in}`
                     );
+                    redirect("/");
                 }}
             />
         ):

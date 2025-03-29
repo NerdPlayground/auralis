@@ -25,7 +25,7 @@ export default function Button({ label, active, action, reaction, setMessage }){
                         setMessage({
                             status: true, error: true,
                             type: response?.type,
-                            content:response.message
+                            content: response.message
                         });
                         return;
                     }
