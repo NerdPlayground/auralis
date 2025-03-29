@@ -11,11 +11,11 @@ export default function Page({ searchParams }){
         error: false,
         content: "-_-",
     });
+    const params=use(searchParams);
     const [message, setMessage]=useState(initialState);
     const [spotifyParams, setParams]=useState(null);
 
     useEffect(()=>{
-        const params=use(searchParams);
         const spError=params["error"];
         if(spError){
             setMessage({
@@ -36,7 +36,7 @@ export default function Page({ searchParams }){
 
         setParams({code, state});
 
-    },[searchParams]);
+    },[params]);
     
     return (
         <div id="container">
