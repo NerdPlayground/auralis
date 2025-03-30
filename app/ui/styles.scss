@@ -52,6 +52,8 @@ a{
     @include flex(column,center,center);
     @include text($size,$size,monospace,$black,bold);
     @include dimensions(200px,200px);
+    font-size: $size;
+    line-height: $size;
 }
 
 .error-message{
@@ -65,7 +67,7 @@ a{
 #container{
     @include dimensions();
     border-radius: 10px;
-    @include border($black,2px);
+    border: 2px solid $black;
     @include flex(column,center,center);
     & > :nth-child(2){
         @include flex(column,center,center);
