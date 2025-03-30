@@ -26,7 +26,7 @@ export default function Root(){
     
     return (
         <div id="container">
-            <div id="authorization" className="container">
+            <div className="container">
                 <Auth
                     item={item}
                     message={message}
@@ -34,7 +34,7 @@ export default function Root(){
                     refresh_token={refresh_token}
                 />
             </div>
-            <div id="menu" className="container">{
+            <div className="container">{
                 menuItems.map(menuItem=>{return (
                     <Button
                         key={menuItem.label}
@@ -48,7 +48,7 @@ export default function Root(){
                     />
                 );})
             }</div>
-            <div id="messages" className="container">
+            <div className="container">
                 <p className={`message ${message.error?"error":"info"}-message`}>
                     {message.content}
                 </p>

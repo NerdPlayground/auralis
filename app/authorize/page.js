@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import styles from "./styles.module.scss";
 import { use, useEffect, useState } from "react";
 import Button from "@/app/components/button";
 import { robotoCondensed } from "@/app/ui/fonts";
@@ -40,14 +41,15 @@ export default function Page({ searchParams }){
     
     return (
         <div id="container">
-            <div id="menu" className="container">
+            <div></div>
+            <div className="container">
                 {message.status?(
                     <Link
-                        id="authorize-button" href="/"
+                        href="/"
                         className={`
                             ${robotoCondensed.className} 
-                            ${message.error? 'error':'info'}
-                            button
+                            ${message.error? styles.error:styles.info}
+                            ${styles.default} button
                         `}
                     >
                         {`Go Back Home`}
@@ -71,7 +73,7 @@ export default function Page({ searchParams }){
                     />
                 )}
             </div>
-            <div id="messages" className="container">
+            <div className="container">
                 <p className={`message ${message.error?"error":"info"}-message`}>
                     {message.content}
                 </p>

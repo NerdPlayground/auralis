@@ -47,24 +47,6 @@ a{
     text-decoration: none;
 }
 
-.error{
-    color: $white;
-    border-color: $red;
-    background-color: $red;
-    &:hover{
-        border-color: $black;
-    }
-}
-
-.info{
-    color: $white;
-    border-color: $green;
-    background-color: $green;
-    &:hover{
-        border-color: $black;
-    }
-}
-
 .message{
     $size: 16px;
     @include flex(column,center,center);
@@ -85,25 +67,23 @@ a{
     border-radius: 10px;
     @include border($black,2px);
     @include flex(column,center,center);
+    & > :nth-child(2){
+        @include flex(column,center,center);
+        & > .button{
+            margin-bottom: 5px;
+            &:last-child{
+                margin-bottom: 0px;
+            }
+        }
+    }
+    & > :nth-child(3){
+        padding-block: 10px;
+        border-bottom: none;
+        text-align: center;
+    }
 }
 
 .container{
     padding: 5px;
     border-bottom: 2px dashed $black;
-}
-
-#menu{
-    @include flex(column,center,center);
-    .button{
-        margin-bottom: 5px;
-        &:last-child{
-            margin-bottom: 0px;
-        }
-    }
-}
-
-#messages{
-    padding-block: 10px;
-    border-bottom: none;
-    text-align: center;
 }
