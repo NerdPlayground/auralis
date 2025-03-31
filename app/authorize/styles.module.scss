@@ -1,0 +1,18 @@
+@use "@/app/ui/colors.scss" as *;
+
+.default{
+    color: $white;
+    &:hover{
+        border-color: $black;
+    }
+}
+
+.error{
+    border-color: $red;
+    background-color: $red;
+}
+
+.info{
+    border-color: $green;
+    background-color: $green;
+}

@@ -1,4 +1,6 @@
-@import "functions.scss";
+@use "sass:color";
+@use "colors.scss" as *;
+@use "functions.scss" as *;
 
 *{
     margin: 0px;
@@ -7,15 +9,8 @@
     -webkit-tap-highlight-color: transparent;
 }
 
-:root{
-    --white: #f5f5f5;
-    --black: #333333;
-    --red: #A80000;
-    --green: #006100;
-}
-
 body{
-    background-color: var(--white);
+    background-color: $white;
     @include flex(column,center,center);
     @include dimensions(100vw,100vw,100vh,100vh);
 }
@@ -23,82 +18,135 @@ body{
 #root{
     @include flex(column,center,center);
     @include dimensions(100%,1500px,100%,100%);
-    .label,
-    .button{
-        padding: 10px;
-        @include dimensions(200px,200px);
-        font-size: 18px;
-        text-align: center;
-        color: var(--black);
-        border-radius: 5px;
-        background-color: var(--white);
-        @include border(var(--black),2px);
+}
+
+.label,.button{
+    padding: 10px;
+    @include dimensions(200px,200px);
+    font-size: 18px;
+    text-align: center;
+    color: $black;
+    border-radius: 5px;
+    background-color: $white;
+    border: 2px solid $black;
+}
+
+.button{
+    cursor: pointer;
+    &:hover{
+        color: $white;
+        background-color: $black;
     }
-    .button{
-        cursor: pointer;
-        &:hover{
-            color: var(--white);
-            background-color: var(--black);
+}
+
+.disabled-button{
+    cursor: not-allowed !important;
+}
+
+a{
+    text-align: center;
+    text-decoration: none;
+}
+
+.message{
+    $size: 16px;
+    @include flex(column,center,center);
+    @include dimensions(200px,200px);
+    font-size: $size;
+    line-height: $size;
+}
+
+.error-message{
+    color: $red;
+}
+
+.info-message{
+    color: $green;
+}
+
+$d-radius: 5px;
+$p-padding: 10px;
+$cover: 300px;
+$border: 2px;
+
+#platform{
+    @include flex(column,center,center);
+    @include dimensions($full-width:calc(#{$cover} + ((#{$p-padding} + #{$border}) * 2)));
+}
+
+#display{
+    padding: $p-padding;
+    border: $border solid $black;
+    border-radius: calc(#{$p-padding} + #{$d-radius});
+    @include dimensions($full-width:100%);
+    & > :nth-child(1){
+        display: block;
+        border-radius: $d-radius;
+        margin-bottom: 10px;
+        @include dimensions($square:$cover);
+    }
+    & > :nth-child(2){
+        $info: 70%;
+        $space: 10px;
+        $controls: calc(100% - #{$info} - #{$space});
+        @include flex(row,center,flex-start);
+        @include dimensions($full-width:100%);
+        & > :nth-child(1){
+            margin-right: $space;
+            @include dimensions($full-width:$info);
+            @include flex(column,flex-start,flex-start);
+            & > div{
+                overflow: hidden;
+                @include dimensions($full-width:100%);
+                & > div{
+                    white-space: nowrap;
+                    @include dimensions($full-height:100%);
+                }
+            }
+            & > :nth-child(1){
+                font-size: 24px;
+                line-height: 30px;
+            }
+            & > :nth-child(2){
+                font-size: 17px;
+            }
         }
-    }
-    .disabled-button{
-        cursor: not-allowed;
-    }
-    a{
-        text-align: center;
-        text-decoration: none;
-    }
-    .error{
-        color: var(--white);
-        border-color: var(--red);
-        background-color: var(--red);
-        &:hover{
-            border-color: var(--black);
+        & > :nth-child(2){
+            overflow: hidden;
+            @include flex(row,flex-start,space-between);
+            @include dimensions($full-dimension:($controls,50px));
+            border-radius: $d-radius;
+            & > svg{
+                cursor: pointer;
+                @include dimensions($full-dimension:(45%,100%));
+                fill: $white;
+                background-color: $black;
+            }
         }
-    }
-    .info{
-        color: var(--white);
-        border-color: var(--green);
-        background-color: var(--green);
-        &:hover{
-            border-color: var(--black);
-        }
-    }
-    .message{
-        $size: 16px;
-        @include flex(column,center,center);
-        @include text($size,$size,monospace,var(--black),bold);
-        @include dimensions(200px,200px);
-    }
-    .error-message{
-        color: var(--red);
-    }
-    .info-message{
-        color: var(--green);
     }
 }
 
 #container{
-    @include dimensions();
     border-radius: 10px;
-    @include border(var(--black),2px);
+    border: 2px solid $black;
     @include flex(column,center,center);
-    .container{
-        padding: 5px;
-        border-bottom: 2px dashed var(--black);
-    }
-    #menu{
+    & > :nth-child(2){
         @include flex(column,center,center);
-        .button{
+        & > .button{
             margin-bottom: 5px;
             &:last-child{
                 margin-bottom: 0px;
             }
         }
     }
-    #messages{
+    & > :nth-child(3){
         padding-block: 10px;
         border-bottom: none;
         text-align: center;
     }
+}
+
+.container{
+    padding: 5px;
+    border-bottom: 2px dashed $black;
 }

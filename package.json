@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "15.0.0-canary.120",
+    "next": "15.3.0-canary.25",
     "react": "19.0.0-rc-49496d49-20240814",
     "react-dom": "19.0.0-rc-49496d49-20240814"
   },
@@ -17,5 +17,10 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.5",
     "sass": "^1.77.8"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp"
+    ]
   }
 }

@@ -1,9 +1,42 @@
+@use "sass:list";
+
 // set dimensions
-@mixin dimensions($width:fit-content,$max-width:fit-content,$height:fit-content,$max-height:fit-content){
-    width: $width;
-    max-width: $max-width;
-    height: $height;
-    max-height: $max-height;
+@mixin dimensions(
+    $width:fit-content,$max-width:fit-content,
+    $height:fit-content,$max-height:fit-content,
+    $full-height:null,$full-width:null,
+    $square:null,$full-dimension:null,
+){
+    @if $square{
+        width: $square;
+        max-width: $square;
+        height: $square;
+        max-height: $square;
+    }
+    @else if $full-width{
+        width: $full-width;
+        max-width: $full-width;
+        height: $height;
+        max-height: $max-height;
+    }
+    @else if $full-height{
+        width: $width;
+        max-width: $max-width;
+        height: $full-height;
+        max-height: $full-height;
+    }
+    @else if $full-dimension{
+        width: list.nth($full-dimension,1);
+        max-width: list.nth($full-dimension,1);
+        height: list.nth($full-dimension,2);
+        max-height: list.nth($full-dimension,2);
+    }
+    @else{
+        width: $width;
+        max-width: $max-width;
+        height: $height;
+        max-height: $max-height;
+    }
 }
 
 // set flexbox properties
@@ -14,18 +47,12 @@
     justify-content: $justify;
 }
 
-// set text properties
-@mixin text($size,$line,$font-family,$color,$font-weight:normal){
+// disables selecting
+@mixin noSelect(){
     user-select: none;
     -ms-user-select: none;
     -moz-user-select: none;
     -webkit-user-select: none;
-    overflow: hidden;
-    color: $color;
-    font-size: $size;
-    line-height: $line;
-    font-weight: $font-weight;
-    font-family: $font-family,monospace;
 }
 
 // set background image
@@ -33,9 +60,4 @@
     background-size: cover;
     background-image: url($url);
     background-position: center;
-}
-
-// set border
-@mixin border($color:#333333,$width:1px,$style:solid){
-    border: $width $style $color;
 }

@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import styles from "./styles.module.scss";
+import { use, useEffect, useState } from "react";
 import Button from "@/app/components/button";
 import { robotoCondensed } from "@/app/ui/fonts";
 import { getAccessToken } from "@/app/lib/actions";
@@ -11,11 +12,12 @@ export default function Page({ searchParams }){
         error: false,
         content: "-_-",
     });
+    const params=use(searchParams);
     const [message, setMessage]=useState(initialState);
     const [spotifyParams, setParams]=useState(null);
 
     useEffect(()=>{
-        const spError=searchParams["error"];
+        const spError=params["error"];
         if(spError){
             setMessage({
                 status: true, error: true, 
@@ -24,7 +26,7 @@ export default function Page({ searchParams }){
             return;
         }
 
-        const {code,state}=searchParams;
+        const {code,state}=params;
         if(code===undefined || state===undefined){
             setMessage({
                 status: true, error: true, 
@@ -35,21 +37,22 @@ export default function Page({ searchParams }){
 
         setParams({code, state});
 
-    },[searchParams]);
+    },[params]);
     
     return (
         <div id="container">
-            <div id="menu" className="container">
+            <div></div>
+            <div className="container">
                 {message.status?(
                     <Link
-                        id="authorize-button" href="/"
+                        href="/"
                         className={`
                             ${robotoCondensed.className} 
-                            ${message.error? 'error':'info'}
-                            button
+                            ${message.error? styles.error:styles.info}
+                            ${styles.default} button
                         `}
                     >
-                        Go Back Home
+                        {`Go Back Home`}
                     </Link>
                 ):(
                     <Button
@@ -70,7 +73,7 @@ export default function Page({ searchParams }){
                     />
                 )}
             </div>
-            <div id="messages" className="container">
+            <div className="container">
                 <p className={`message ${message.error?"error":"info"}-message`}>
                     {message.content}
                 </p>
