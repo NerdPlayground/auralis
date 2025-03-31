@@ -1,3 +1,4 @@
+@use "sass:color";
 @use "colors.scss" as *;
 @use "functions.scss" as *;
 
@@ -27,7 +28,7 @@ body{
     color: $black;
     border-radius: 5px;
     background-color: $white;
-    @include border($black,2px);
+    border: 2px solid $black;
 }
 
 .button{
@@ -39,7 +40,7 @@ body{
 }
 
 .disabled-button{
-    cursor: not-allowed;
+    cursor: not-allowed !important;
 }
 
 a{
@@ -50,7 +51,6 @@ a{
 .message{
     $size: 16px;
     @include flex(column,center,center);
-    @include text($size,$size,monospace,$black,bold);
     @include dimensions(200px,200px);
     font-size: $size;
     line-height: $size;
@@ -64,8 +64,69 @@ a{
     color: $green;
 }
 
+$d-radius: 5px;
+$p-padding: 10px;
+$cover: 300px;
+$border: 2px;
+
+#platform{
+    @include flex(column,center,center);
+    @include dimensions($full-width:calc(#{$cover} + ((#{$p-padding} + #{$border}) * 2)));
+}
+
+#display{
+    padding: $p-padding;
+    border: $border solid $black;
+    border-radius: calc(#{$p-padding} + #{$d-radius});
+    @include dimensions($full-width:100%);
+    & > :nth-child(1){
+        display: block;
+        border-radius: $d-radius;
+        margin-bottom: 10px;
+        @include dimensions($square:$cover);
+    }
+    & > :nth-child(2){
+        $info: 70%;
+        $space: 10px;
+        $controls: calc(100% - #{$info} - #{$space});
+        @include flex(row,center,flex-start);
+        @include dimensions($full-width:100%);
+        & > :nth-child(1){
+            margin-right: $space;
+            @include dimensions($full-width:$info);
+            @include flex(column,flex-start,flex-start);
+            & > div{
+                overflow: hidden;
+                @include dimensions($full-width:100%);
+                & > div{
+                    white-space: nowrap;
+                    @include dimensions($full-height:100%);
+                }
+            }
+            & > :nth-child(1){
+                font-size: 24px;
+                line-height: 30px;
+            }
+            & > :nth-child(2){
+                font-size: 17px;
+            }
+        }
+        & > :nth-child(2){
+            overflow: hidden;
+            @include flex(row,flex-start,space-between);
+            @include dimensions($full-dimension:($controls,50px));
+            border-radius: $d-radius;
+            & > svg{
+                cursor: pointer;
+                @include dimensions($full-dimension:(45%,100%));
+                fill: $white;
+                background-color: $black;
+            }
+        }
+    }
+}
+
 #container{
-    @include dimensions();
     border-radius: 10px;
     border: 2px solid $black;
     @include flex(column,center,center);

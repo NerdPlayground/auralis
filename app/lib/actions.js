@@ -112,6 +112,14 @@ export async function getCurrentlyPlaying(access_token){
         }
     }
     
-    console.log(results?.item?.name ?? "NOTHING IS PLAYING");
-    return{ success: true, };
+    const item=results?.item;
+    return{
+        success: true,
+        display:{
+            name: item?.name,
+            cover: item?.album?.images[1].url,
+            artists: item?.artists?.
+            map(artist=>artist.name).join(", "),
+        }
+    };
 }

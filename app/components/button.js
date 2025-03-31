@@ -33,6 +33,7 @@ export default function Button({ label, active, action, reaction, setMessage }){
                     if(reaction) reaction(response);
                     setMessage({
                         content: "Success :)",
+                        display: response?.display,
                         status: true, error: false,
                     });
                 });
