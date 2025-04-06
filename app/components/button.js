@@ -1,7 +1,8 @@
 import { useTransition } from "react";
+import Icon from "@/app/components/icons";
 import { robotoCondensed } from "@/app/ui/fonts";
 
-export default function Button({ label, active, action, reaction, setMessage }){
+export default function Button({ icon, label, active, action, reaction, setMessage }){
     const [isPending, startTransition]=useTransition();
     const buttonClasses=[
         "button",
@@ -10,36 +11,41 @@ export default function Button({ label, active, action, reaction, setMessage }){
     ];
 
     return (
-        <button
-            disabled={!active}
-            className={buttonClasses.join(" ")}
-            onClick={()=>{
-                startTransition(async ()=>{
-                    const args=action?.arguments;
-                    let response=(!args? 
-                        await action.method():
-                        await action.method(...args)
-                    );
-                    
-                    if(!response.success){
+        <div className="button-container">
+            <div>
+                <Icon label={icon}/>
+            </div>
+            <button
+                disabled={!active}
+                className={buttonClasses.join(" ")}
+                onClick={()=>{
+                    startTransition(async ()=>{
+                        const args=action?.arguments;
+                        let response=(!args? 
+                            await action.method():
+                            await action.method(...args)
+                        );
+                        
+                        if(!response.success){
+                            setMessage({
+                                status: true, error: true,
+                                type: response?.type,
+                                content: response.message
+                            });
+                            return;
+                        }
+                        
+                        if(reaction) reaction(response);
                         setMessage({
-                            status: true, error: true,
-                            type: response?.type,
-                            content: response.message
+                            content: "Success :)",
+                            display: response?.display,
+                            status: true, error: false,
                         });
-                        return;
-                    }
-                    
-                    if(reaction) reaction(response);
-                    setMessage({
-                        content: "Success :)",
-                        display: response?.display,
-                        status: true, error: false,
                     });
-                });
-            }}
-        >{
-            isPending? `Loading...` : label
-        }</button>
+                }}
+            >{
+                isPending? `Loading...` : label
+            }</button>
+        </div>
     );
 }

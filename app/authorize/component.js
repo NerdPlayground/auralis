@@ -2,12 +2,14 @@
 import { redirect } from "next/navigation";
 import Button from "@/app/components/button";
 import { robotoCondensed } from "@/app/ui/fonts";
+import Icon from "@/app/components/icons";
 import { handleAuthorization, refreshAccessToken } from "@/app/lib/actions";
 
 export default function Auth({ item, message, setMessage, refresh_token }){
     return (
         (item==="" || (message.error && message.type==="400"))?(
             <Button
+                icon={"print"}
                 active={true}
                 label={`Authorize Application`}
                 action={{
@@ -18,6 +20,7 @@ export default function Auth({ item, message, setMessage, refresh_token }){
         ):
         (message.error && message.type==="401")?(
             <Button
+                icon={"refresh"}
                 active={true}
                 label={`Refresh Access Token`}
                 action={{
@@ -36,9 +39,14 @@ export default function Auth({ item, message, setMessage, refresh_token }){
             />
         ):
         (
-            <p className={`${robotoCondensed.className} label`}>
-                {`${message.error?"Oh no 😞":"Enjoy 😉"}`}
-            </p>
+            <div className="button-container">
+                <div>
+                    <Icon label={"thumbs-up"}/>
+                </div>
+                <p className={`${robotoCondensed.className} label`}>
+                    {`${message.error?"Oh no":"Enjoy"}`}
+                </p>
+            </div>
         )
     );
 }
