@@ -2,7 +2,7 @@
 import Link from "next/link";
 import styles from "./styles.module.scss";
 import { use, useEffect, useState } from "react";
-import Button from "@/app/components/button/button";
+import Button from "@/app/components/button/component";
 import { robotoCondensed } from "@/app/ui/fonts";
 import { getAccessToken } from "@/app/lib/actions";
 

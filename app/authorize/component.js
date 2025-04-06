@@ -1,6 +1,6 @@
 "use client";
 import { redirect } from "next/navigation";
-import Button from "@/app/components/button/button";
+import Button from "@/app/components/button/component";
 import { robotoCondensed } from "@/app/ui/fonts";
 import { handleAuthorization, refreshAccessToken } from "@/app/lib/actions";
 
