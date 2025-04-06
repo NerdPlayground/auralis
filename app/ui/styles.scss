@@ -23,17 +23,6 @@ body{
     @include dimensions(100%,1500px,100%,100%);
 }
 
-.label{
-    padding: 10px;
-    @include dimensions($full-dimension:(200px,$bheight));
-    font-size: 18px;
-    text-align: center;
-    color: $black;
-    border-radius: 5px;
-    background-color: $white;
-    border: 2px solid $black;
-}
-
 .disabled-button{
     cursor: not-allowed !important;
 }
