@@ -75,6 +75,7 @@ $border: 2px;
         @include flex(row,center,flex-start);
         @include dimensions($full-width:100%);
         & > :nth-child(1){
+            color: $black;
             margin-right: $space;
             @include dimensions($full-width:$info);
             @include flex(column,flex-start,flex-start);
