@@ -43,7 +43,7 @@ export default function Auth({ item, message, setMessage, refresh_token }){
                 <div>
                     <Icon label={`${message.error?"thumbs-down":"thumbs-up"}`}/>
                 </div>
-                <p className={`${robotoCondensed.className} label`}>
+                <p className={`${robotoCondensed.className}`}>
                     {`${message.error?"Oh no, Something Went Wrong!!!":"You Are All Set, Have Fun!!!"}`}
                 </p>
             </div>
