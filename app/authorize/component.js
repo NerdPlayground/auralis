@@ -41,10 +41,10 @@ export default function Auth({ item, message, setMessage, refresh_token }){
         (
             <div className="button-container">
                 <div>
-                    <Icon label={"thumbs-up"}/>
+                    <Icon label={`${message.error?"thumbs-down":"thumbs-up"}`}/>
                 </div>
                 <p className={`${robotoCondensed.className} label`}>
-                    {`${message.error?"Oh no":"Enjoy"}`}
+                    {`${message.error?"Oh no, Something Went Wrong!!!":"You Are All Set, Have Fun!!!"}`}
                 </p>
             </div>
         )
