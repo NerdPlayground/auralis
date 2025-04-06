@@ -1,8 +1,7 @@
 "use client";
 import { redirect } from "next/navigation";
-import Button from "@/app/components/button";
+import Button from "@/app/components/button/button";
 import { robotoCondensed } from "@/app/ui/fonts";
-import Icon from "@/app/components/icons";
 import { handleAuthorization, refreshAccessToken } from "@/app/lib/actions";
 
 export default function Auth({ item, message, setMessage, refresh_token }){
@@ -39,14 +38,15 @@ export default function Auth({ item, message, setMessage, refresh_token }){
             />
         ):
         (
-            <div className="button-container">
-                <div>
-                    <Icon label={`${message.error?"thumbs-down":"thumbs-up"}`}/>
-                </div>
-                <p className={`${robotoCondensed.className}`}>
-                    {`${message.error?"Oh no, Something Went Wrong!!!":"You Are All Set, Have Fun!!!"}`}
-                </p>
-            </div>
+            <Button
+                button={false}
+                icon={`${message.error?"thumbs-down":"thumbs-up"}`}
+                element={(
+                    <p className={`${robotoCondensed.className}`}>
+                        {`${message.error?"Oh no, Something Went Wrong!!!":"You Are All Set, Have Fun!!!"}`}
+                    </p>
+                )}
+            />
         )
     );
 }

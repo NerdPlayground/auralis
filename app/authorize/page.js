@@ -2,10 +2,9 @@
 import Link from "next/link";
 import styles from "./styles.module.scss";
 import { use, useEffect, useState } from "react";
-import Button from "@/app/components/button";
+import Button from "@/app/components/button/button";
 import { robotoCondensed } from "@/app/ui/fonts";
 import { getAccessToken } from "@/app/lib/actions";
-import Icon from "../components/icons";
 
 export default function Page({ searchParams }){
     const initialState=Object.freeze({
@@ -46,21 +45,21 @@ export default function Page({ searchParams }){
                 <div></div>
                 <div className="container">
                     {message.status?(
-                        <div className="button-container">
-                            <div>
-                                <Icon label={"home"}/>
-                            </div>
-                            <Link
-                                href="/"
-                                className={`
-                                    ${robotoCondensed.className} 
-                                    ${message.error? styles.error:styles.info}
-                                    ${styles.default} button
-                                `}
-                            >
-                                {`Go Back Home`}
-                            </Link>
-                        </div>
+                        <Button
+                            icon={"home"} button={false}
+                            element={(
+                                <Link
+                                    href="/"
+                                    className={`
+                                        ${robotoCondensed.className} 
+                                        ${message.error? styles.error:styles.info}
+                                        ${styles.default} button
+                                    `}
+                                >
+                                    {`Go Back Home`}
+                                </Link>
+                            )}
+                        />
                     ):(
                         <Button
                             icon={"key"}

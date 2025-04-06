@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Auth from "@/app/authorize/component";
-import Button from "@/app/components/button";
+import Button from "@/app/components/button/button";
 import { useLocalStorage } from "@/app/lib/hooks";
 import { getCurrentlyPlaying } from "@/app/lib/actions";
 import Image from "next/image";

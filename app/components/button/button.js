@@ -1,8 +1,12 @@
 import { useTransition } from "react";
 import Icon from "@/app/components/icons";
+import styles from "./styles.module.scss";
 import { robotoCondensed } from "@/app/ui/fonts";
 
-export default function Button({ icon, label, active, action, reaction, setMessage }){
+export default function Button({ 
+    icon, label, active, action, reaction, 
+    setMessage, button=true, element=null
+}){
     const [isPending, startTransition]=useTransition();
     const buttonClasses=[
         "button",
@@ -11,10 +15,11 @@ export default function Button({ icon, label, active, action, reaction, setMessa
     ];
 
     return (
-        <div className="button-container">
+        <div className={`${styles.button_container} button-container`}>
             <div>
                 <Icon label={icon}/>
             </div>
+            {!button?element:
             <button
                 disabled={!active}
                 className={buttonClasses.join(" ")}
@@ -45,7 +50,7 @@ export default function Button({ icon, label, active, action, reaction, setMessa
                 }}
             >{
                 isPending? `Loading...` : label
-            }</button>
+            }</button>}
         </div>
     );
 }
