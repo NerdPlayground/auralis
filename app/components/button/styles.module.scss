@@ -1,0 +1,44 @@
+@use "@/app/ui/colors.scss" as *;
+@use "@/app/ui/functions.scss" as *;
+
+.button_container{
+    $bheight: 50px;
+    $icon: 50px;
+    $space: 10px;
+    $button: calc(100% - #{$icon} - #{$space});
+    margin-bottom: 10px;
+    @include flex(row,center,flex-start);
+    @include dimensions($full-width:100%);
+    &:last-child{
+        margin-bottom: 0;
+    }
+    & > div{
+        margin-right: $space;
+        @include flex(row,center,center);
+        @include dimensions($full-dimension:($icon,$bheight));
+        border-radius: 5px;
+        border: 2px solid $black;
+        background-color: $black;
+        & > svg{
+            fill: $white;
+            @include dimensions($square:35px);
+        }
+    }
+    & > button,& > p,& > a{
+        padding: 10px;
+        @include dimensions($full-dimension:($button,$bheight));
+        font-size: 18px;
+        text-align: center;
+        color: $black;
+        border-radius: 5px;
+        background-color: $white;
+        border: 2px solid $black;
+    }
+    & > button,& > a{
+        cursor: pointer;
+        &:hover{
+            color: $white;
+            background-color: $black;
+        }
+    }
+}

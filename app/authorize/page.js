@@ -2,9 +2,10 @@
 import Link from "next/link";
 import styles from "./styles.module.scss";
 import { use, useEffect, useState } from "react";
-import Button from "@/app/components/button";
+import Button from "@/app/components/button/component";
 import { robotoCondensed } from "@/app/ui/fonts";
 import { getAccessToken } from "@/app/lib/actions";
+import Message from "@/app/components/message/component";
 
 export default function Page({ searchParams }){
     const initialState=Object.freeze({
@@ -40,22 +41,27 @@ export default function Page({ searchParams }){
     },[params]);
     
     return (
-        <div id="container">
-            <div></div>
-            <div className="container">
+        <div id="authorize">
+            <div>
                 {message.status?(
-                    <Link
-                        href="/"
-                        className={`
-                            ${robotoCondensed.className} 
-                            ${message.error? styles.error:styles.info}
-                            ${styles.default} button
-                        `}
-                    >
-                        {`Go Back Home`}
-                    </Link>
+                    <Button
+                        icon={"home"} button={false}
+                        element={(
+                            <Link
+                                href="/"
+                                className={`
+                                    ${robotoCondensed.className} 
+                                    ${message.error? styles.error:styles.info}
+                                    ${styles.default} button
+                                `}
+                            >
+                                {`Go Back Home`}
+                            </Link>
+                        )}
+                    />
                 ):(
                     <Button
+                        icon={"key"}
                         active={true}
                         label={`Get Access Token`}
                         action={{
@@ -73,11 +79,7 @@ export default function Page({ searchParams }){
                     />
                 )}
             </div>
-            <div className="container">
-                <p className={`message ${message.error?"error":"info"}-message`}>
-                    {message.content}
-                </p>
-            </div>
+            <Message content={message}/>
         </div>
     );
 }

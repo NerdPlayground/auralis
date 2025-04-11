@@ -1,11 +1,12 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Auth from "@/app/authorize/component";
-import Button from "@/app/components/button";
+import Button from "@/app/components/button/component";
 import { useLocalStorage } from "@/app/lib/hooks";
 import { getCurrentlyPlaying } from "@/app/lib/actions";
 import Image from "next/image";
 import { anton, robotoCondensed } from "./ui/fonts";
+import Message from "@/app/components/message/component";
 
 export default function Root(){
     const name_container=useRef(null);
@@ -25,6 +26,7 @@ export default function Root(){
 
     const menuItems=Object.freeze([
         {
+            icon:"playing",
             label: "Get Currently Playing",
             method: getCurrentlyPlaying,
             arguments: [access_token],
@@ -32,28 +34,45 @@ export default function Root(){
     ]);
 
     useEffect(()=>{
-        function startAnimation(parent,child){
+        function startAnimation(animation,parent,child){
             const SPEED=18;
             const parent_width=getComputedStyle(parent).width;
             const child_width=getComputedStyle(child).width;
             let difference=+parent_width.slice(0,-2)-+child_width.slice(0,-2);
 
+            let cover_styles=null;
             if(difference<0){
-                let cover_styles=document.createElement("style");
+                cover_styles=document.createElement("style");
                 cover_styles.setAttribute("type","text/css");
                 cover_styles.innerHTML=`
-                @keyframes scroll{
+                @keyframes ${animation}{
                     0%{ transform: translateX(0); }
                     100%{ transform: translateX(calc(${parent_width} - ${child_width})); }
                 }`;
                 document.head.appendChild(cover_styles);
                 const time=Math.ceil((difference*-1)/SPEED);
-                child.style.animation=`scroll ${time}s linear infinite alternate`;
+                child.style.animation=`${animation} ${time}s linear infinite alternate`;
             }
+            return cover_styles;
         }
-        startAnimation(name_container.current,name_marquee.current);
-        startAnimation(artists_container.current,artists_marquee.current);
-    })
+
+        let name_styles=startAnimation(
+            "name_marquee",name_container.current,name_marquee.current
+        );
+        let artist_styles=startAnimation(
+            "artists_marquee",artists_container.current,artists_marquee.current
+        );
+        return(()=>{
+            if(name_styles!==null) {
+                console.log("removing styles: name");
+                document.head.removeChild(name_styles);
+            }
+            if(artist_styles!==null) {
+                console.log("removing styles: artist");
+                document.head.removeChild(artist_styles);
+            }
+        });
+    },[message]);
 
     return (
         <div id="platform">
@@ -97,7 +116,7 @@ export default function Root(){
                 </div>
             </div>
             <div id="container">
-                <div className="container">
+                <div>
                     <Auth
                         item={item}
                         message={message}
@@ -105,9 +124,10 @@ export default function Root(){
                         refresh_token={refresh_token}
                     />
                 </div>
-                <div className="container">{
+                <div>{
                     menuItems.map(menuItem=>{return (
                         <Button
+                            icon={menuItem.icon}
                             key={menuItem.label}
                             label={menuItem.label}
                             action={{
@@ -119,11 +139,7 @@ export default function Root(){
                         />
                     );})
                 }</div>
-                <div className="container">
-                    <p className={`message ${message.error?"error":"info"}-message`}>
-                        {message.content}
-                    </p>
-                </div>
+                <Message content={message}/>
             </div>
         </div>
     );
