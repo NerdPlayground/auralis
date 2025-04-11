@@ -40,51 +40,48 @@ export default function Page({ searchParams }){
     },[params]);
     
     return (
-        <div id="platform">
-            <div id="container">
-                <div></div>
-                <div className="container">
-                    {message.status?(
-                        <Button
-                            icon={"home"} button={false}
-                            element={(
-                                <Link
-                                    href="/"
-                                    className={`
-                                        ${robotoCondensed.className} 
-                                        ${message.error? styles.error:styles.info}
-                                        ${styles.default} button
-                                    `}
-                                >
-                                    {`Go Back Home`}
-                                </Link>
-                            )}
-                        />
-                    ):(
-                        <Button
-                            icon={"key"}
-                            active={true}
-                            label={`Get Access Token`}
-                            action={{
-                                method: getAccessToken,
-                                arguments: [spotifyParams],
-                            }}
-                            reaction={(response)=>{
-                                const { access_token, refresh_token, expires_in }=response;
-                                localStorage.setItem(
-                                    "spotify-package",
-                                    `${access_token} | ${refresh_token} | ${expires_in}`
-                                );
-                            }}
-                            setMessage={setMessage}
-                        />
-                    )}
-                </div>
-                <div className="container">
-                    <p className={`message ${message.error?"error":"info"}-message`}>
-                        {message.content}
-                    </p>
-                </div>
+        <div id="authorize">
+            <div>
+                {message.status?(
+                    <Button
+                        icon={"home"} button={false}
+                        element={(
+                            <Link
+                                href="/"
+                                className={`
+                                    ${robotoCondensed.className} 
+                                    ${message.error? styles.error:styles.info}
+                                    ${styles.default} button
+                                `}
+                            >
+                                {`Go Back Home`}
+                            </Link>
+                        )}
+                    />
+                ):(
+                    <Button
+                        icon={"key"}
+                        active={true}
+                        label={`Get Access Token`}
+                        action={{
+                            method: getAccessToken,
+                            arguments: [spotifyParams],
+                        }}
+                        reaction={(response)=>{
+                            const { access_token, refresh_token, expires_in }=response;
+                            localStorage.setItem(
+                                "spotify-package",
+                                `${access_token} | ${refresh_token} | ${expires_in}`
+                            );
+                        }}
+                        setMessage={setMessage}
+                    />
+                )}
+            </div>
+            <div className="message-container">
+                <p className={`message ${message.error?"error":"info"}-message`}>
+                    {message.content}
+                </p>
             </div>
         </div>
     );

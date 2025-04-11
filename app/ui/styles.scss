@@ -51,7 +51,7 @@ $p-padding: 10px;
 $cover: 300px;
 $border: 2px;
 
-#platform{
+#platform,#authorize{
     @include flex(column,center,center);
     @include dimensions($full-width:calc(#{$cover} + ((#{$p-padding} + #{$border}) * 2)));
 }
@@ -139,5 +139,27 @@ $border: 2px;
             border-radius: 5px;
             border: 2px solid $black;
         }
+    }
+}
+
+.message-container{
+    & > p{
+        padding: 5px;
+        @include dimensions($full-dimension:(100%,60px));
+        text-align: center;
+        font-family: monospace;
+        font-weight: bold;
+        border-radius: 5px;
+        border: 2px solid $black;
+    }
+}
+
+#authorize{
+    height: 100%;
+    max-height: 100%;
+    & > *{
+        padding: 5px;
+        @include flex(column,center,center);
+        @include dimensions($full-width:100%);
     }
 }
