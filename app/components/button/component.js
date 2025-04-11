@@ -15,7 +15,7 @@ export default function Button({
     ];
 
     return (
-        <div className={`${styles.button_container} button-container`}>
+        <div className={`${styles.button_container}`}>
             <div>
                 <Icon label={icon}/>
             </div>

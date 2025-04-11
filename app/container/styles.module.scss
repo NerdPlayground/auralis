@@ -1,0 +1,23 @@
+@use "@/app/ui/colors.scss" as *;
+@use "@/app/ui/functions.scss" as *;
+
+.container{
+    @include flex(column,center,center);
+    @include dimensions($full-width:100%);
+    & > *{
+        padding: 5px;
+        @include flex(column,center,center);
+        @include dimensions($full-width:100%);
+    }
+    & > :nth-child(1){
+        & > div{
+            flex-direction: row-reverse !important;
+            & > :nth-child(1){
+                margin-right: 0;
+            }
+            & > :nth-child(2){
+                margin-right: 10px;
+            }
+        }
+    }
+}
