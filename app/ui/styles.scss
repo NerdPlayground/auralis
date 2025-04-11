@@ -30,22 +30,6 @@ a{
     text-decoration: none;
 }
 
-.message{
-    $size: 16px;
-    @include flex(column,center,center);
-    @include dimensions(200px,200px);
-    font-size: $size;
-    line-height: $size;
-}
-
-.error-message{
-    color: $red;
-}
-
-.info-message{
-    color: $green;
-}
-
 $d-radius: 5px;
 $p-padding: 10px;
 $cover: 300px;
@@ -128,29 +112,6 @@ $border: 2px;
                 margin-right: 10px;
             }
         }
-    }
-    & > :nth-child(3){
-        & > p{
-            padding: 5px;
-            @include dimensions($full-dimension:(100%,60px));
-            text-align: center;
-            font-family: monospace;
-            font-weight: bold;
-            border-radius: 5px;
-            border: 2px solid $black;
-        }
-    }
-}
-
-.message-container{
-    & > p{
-        padding: 5px;
-        @include dimensions($full-dimension:(100%,60px));
-        text-align: center;
-        font-family: monospace;
-        font-weight: bold;
-        border-radius: 5px;
-        border: 2px solid $black;
     }
 }
 

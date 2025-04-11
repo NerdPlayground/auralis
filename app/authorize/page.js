@@ -5,6 +5,7 @@ import { use, useEffect, useState } from "react";
 import Button from "@/app/components/button/component";
 import { robotoCondensed } from "@/app/ui/fonts";
 import { getAccessToken } from "@/app/lib/actions";
+import Message from "@/app/components/message/component";
 
 export default function Page({ searchParams }){
     const initialState=Object.freeze({
@@ -78,11 +79,7 @@ export default function Page({ searchParams }){
                     />
                 )}
             </div>
-            <div className="message-container">
-                <p className={`message ${message.error?"error":"info"}-message`}>
-                    {message.content}
-                </p>
-            </div>
+            <Message content={message}/>
         </div>
     );
 }

@@ -6,6 +6,7 @@ import { useLocalStorage } from "@/app/lib/hooks";
 import { getCurrentlyPlaying } from "@/app/lib/actions";
 import Image from "next/image";
 import { anton, robotoCondensed } from "./ui/fonts";
+import Message from "@/app/components/message/component";
 
 export default function Root(){
     const name_container=useRef(null);
@@ -138,11 +139,7 @@ export default function Root(){
                         />
                     );})
                 }</div>
-                <div>
-                    <p className={`message ${message.error?"error":"info"}-message`}>
-                        {message.content}
-                    </p>
-                </div>
+                <Message content={message}/>
             </div>
         </div>
     );
