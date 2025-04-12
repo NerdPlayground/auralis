@@ -81,10 +81,12 @@ function Controls({ message }){
 }
 
 export default function Display({ message }){
+    const dimension=300;
     return(
         <div id="display">
             <Image
-                alt="Cover Image" width={300} height={300}
+                alt="Cover Image" 
+                width={dimension} height={dimension}
                 src={
                     message?.display?.cover? 
                     message.display.cover:"/default.png"
