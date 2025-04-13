@@ -66,13 +66,13 @@ function Controls({ message }){
         <div>
             <svg 
                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
-                className={`${message?.displays?"":"disabled-button"}`}
+                className={`${message?.display?"":"disabled-button"}`}
             >
                 <path d="M5 15h14l-7-8-7 8Z"></path>
             </svg>
             <svg 
                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
-                className={`${message?.displays?"":"disabled-button"}`}
+                className={`${message?.display?"":"disabled-button"}`}
             >
                 <path d="m11.998 17 7-8h-14l7 8Z"></path>
             </svg>
