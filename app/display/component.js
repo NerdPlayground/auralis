@@ -2,7 +2,7 @@ import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { anton, robotoCondensed } from "@/app/ui/fonts";
 
-function Details({ message }){
+function Details({ display }){
     const name_container=useRef(null);
     const name_marquee=useRef(null);
     const artists_container=useRef(null);
@@ -41,38 +41,38 @@ function Details({ message }){
             if(name_styles!==null) document.head.removeChild(name_styles);
             if(artist_styles!==null) document.head.removeChild(artist_styles);
         });
-    },[message]);
+    },[display]);
 
     return(
         <div>
             <div className={`${anton.className}`} ref={name_container}>
                 <div ref={name_marquee}>
-                    {message?.display?.name?
-                    message.display.name:`Welcome To Lotify`}
+                    {display?.name?
+                    display.name:`Welcome To Lotify`}
                 </div>
             </div>
             <div className={`${robotoCondensed.className}`} ref={artists_container}>
                 <div ref={artists_marquee}>
-                    {message?.display?.artists?
-                    message.display.artists:`Fellow Listener`}
+                    {display?.artists?
+                    display.artists:`Fellow Listener`}
                 </div>
             </div>
         </div>
     );
 }
 
-function Controls({ message }){
+function Controls({ multiple }){
     return(
         <div>
             <svg 
                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
-                className={`${message?.display?"":"disabled-button"}`}
+                className={`${multiple?"":"disabled-button"}`}
             >
                 <path d="M5 15h14l-7-8-7 8Z"></path>
             </svg>
             <svg 
                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
-                className={`${message?.display?"":"disabled-button"}`}
+                className={`${multiple?"":"disabled-button"}`}
             >
                 <path d="m11.998 17 7-8h-14l7 8Z"></path>
             </svg>
@@ -80,7 +80,7 @@ function Controls({ message }){
     );
 }
 
-export default function Display({ message }){
+export default function Display({ display }){
     const dimension=300;
     return(
         <div id="display">
@@ -88,13 +88,13 @@ export default function Display({ message }){
                 alt="Cover Image" 
                 width={dimension} height={dimension}
                 src={
-                    message?.display?.cover? 
-                    message.display.cover:"/default.png"
+                    display?.cover? 
+                    display.cover:"/default.png"
                 }
             />
             <div>
-                <Details message={message}/>
-                <Controls message={message}/>
+                <Details display={display}/>
+                <Controls multiple={Array.isArray(display)}/>
             </div>
         </div>
     );

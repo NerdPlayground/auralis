@@ -14,7 +14,7 @@ export default function Root(){
 
     return (
         <div id="platform">
-            <Display message={message}/>
+            <Display display={message?.display}/>
             <Container
                 message={message}
                 setMessage={setMessage}
