@@ -46,16 +46,16 @@ function Details({ display }){
     return(
         <div>
             <div className={`${anton.className}`} ref={name_container}>
-                <div ref={name_marquee}>
-                    {display?.name?
-                    display.name:`Welcome To Lotify`}
-                </div>
+                <div ref={name_marquee}>{
+                    !display? `Welcome To Lotify`:
+                    display?.name? display.name:`Nothing Is Playing`
+                }</div>
             </div>
             <div className={`${robotoCondensed.className}`} ref={artists_container}>
-                <div ref={artists_marquee}>
-                    {display?.artists?
-                    display.artists:`Fellow Listener`}
-                </div>
+                <div ref={artists_marquee}>{
+                    !display?`Fellow Listener`:
+                    display?.artists? display.artists:`No Artists`
+                }</div>
             </div>
         </div>
     );
@@ -88,8 +88,8 @@ export default function Display({ display }){
                 alt="Cover Image" 
                 width={dimension} height={dimension}
                 src={
-                    display?.cover? 
-                    display.cover:"/default.png"
+                    !display?"/default.png":
+                    display?.cover? display.cover:"/nothing.png"
                 }
             />
             <div>
