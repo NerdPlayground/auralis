@@ -11,13 +11,15 @@ export default function Root(){
         content: "-_-",
     });
     const [message, setMessage]=useState(initialState);
+    const [display, setDisplay]=useState(null);
 
     return (
         <div id="platform">
-            <Display display={message?.display}/>
+            <Display display={display}/>
             <Container
                 message={message}
                 setMessage={setMessage}
+                setDisplay={setDisplay}
             />
         </div>
     );
