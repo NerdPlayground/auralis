@@ -6,6 +6,7 @@
     padding: 5px;
     @include flex(column,center,center);
     @include dimensions($full-dimension:(100%,60px));
+    @include noSelect();
     font-size: $size;
     line-height: $size;
     text-align: center;

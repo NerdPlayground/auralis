@@ -51,6 +51,7 @@ $border: 2px;
         border-radius: $d-radius;
         margin-bottom: 10px;
         @include dimensions($square:$cover);
+        @include noSelect();
     }
     & > :nth-child(2){
         $info: 70%;
