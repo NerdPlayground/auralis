@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "embla-carousel-react": "^8.6.0",
     "next": "15.3.0-canary.25",
     "react": "19.0.0-rc-49496d49-20240814",
     "react-dom": "19.0.0-rc-49496d49-20240814"

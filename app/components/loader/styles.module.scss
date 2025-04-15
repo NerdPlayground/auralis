@@ -1,0 +1,35 @@
+@use "sass:color";
+@use "@/app/ui/colors.scss" as *;
+@use "@/app/ui/functions.scss" as *;
+
+.loader{
+    @include dimensions($square:100%);
+    @include flex(column,center,center);
+    & > div{
+        position: relative;
+        @include flex(row,center,center);
+        @include dimensions($full-width:100%);
+        & > svg{
+            position: absolute;
+            fill: $red;
+            @include dimensions($square:30px);
+        }
+        & > div{
+            margin-inline: 5px;
+            @include dimensions($square:75px);
+            border-radius: 50%;
+            border: 5px solid $black;
+            border-inline-color: transparent;
+            border-top-color: color.scale($black,$lightness:20%);
+            animation: spin 2s linear infinite;
+        }
+    }
+}
+
+@keyframes spin{
+    0%{ transform: rotate(0deg); }
+    25%{ transform: rotate(90deg); }
+    50%{ transform: rotate(180deg); }
+    75%{ transform: rotate(270deg); }
+    100%{ transform: rotate(360deg); }
+}

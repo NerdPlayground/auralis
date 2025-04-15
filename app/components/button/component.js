@@ -5,7 +5,7 @@ import { robotoCondensed } from "@/app/ui/fonts";
 
 export default function Button({ 
     icon, label, active, action, reaction, 
-    setMessage, button=true, element=null
+    setMessage, setDisplay, button=true, element=null
 }){
     const [isPending, startTransition]=useTransition();
     const buttonClasses=[
@@ -15,7 +15,7 @@ export default function Button({
     ];
 
     return (
-        <div className={`${styles.button_container} button-container`}>
+        <div className={`${styles.button_container}`}>
             <div>
                 <Icon label={icon}/>
             </div>
@@ -43,9 +43,10 @@ export default function Button({
                         if(reaction) reaction(response);
                         setMessage({
                             content: "Success :)",
-                            display: response?.display,
                             status: true, error: false,
                         });
+                        if(response?.display)
+                            setDisplay(response.display);
                     });
                 }}
             >{
