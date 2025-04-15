@@ -84,11 +84,14 @@ $border: 2px;
             @include flex(row,flex-start,space-between);
             @include dimensions($full-dimension:($controls,50px));
             border-radius: $d-radius;
-            & > svg{
+            & > div{
                 cursor: pointer;
                 @include dimensions($full-dimension:(45%,100%));
-                fill: $white;
                 background-color: $black;
+                & > svg{
+                    fill: $white;
+                    @include dimensions($square:100%);
+                }
             }
         }
     }

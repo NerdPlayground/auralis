@@ -61,26 +61,39 @@ function Details({ display }){
     );
 }
 
-function Controls({ multiple }){
+function Controls({ setDisplay,index,setIndex,results }){
+
+    function changeDisplay(direction){
+        let nextIndex=index+direction;
+        if(nextIndex>=0 && nextIndex<results.length){
+            setIndex(nextIndex);
+            setDisplay(results[nextIndex]);                                
+        }
+    }
+
     return(
         <div>
-            <svg 
-                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
-                className={`${multiple?"":"disabled-button"}`}
-            >
-                <path d="M5 15h14l-7-8-7 8Z"></path>
-            </svg>
-            <svg 
-                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
-                className={`${multiple?"":"disabled-button"}`}
-            >
-                <path d="m11.998 17 7-8h-14l7 8Z"></path>
-            </svg>
+            <div onClick={results?()=>changeDisplay(-1):null}>
+                <svg 
+                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                    className={`${results?"":"disabled-button"}`}
+                >
+                    <path d="M5 15h14l-7-8-7 8Z"></path>
+                </svg>
+            </div>
+            <div onClick={results?()=>changeDisplay(1):null}>
+                <svg 
+                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                    className={`${results?"":"disabled-button"}`}
+                >
+                    <path d="m11.998 17 7-8h-14l7 8Z"></path>
+                </svg>
+            </div>
         </div>
     );
 }
 
-export default function Display({ display }){
+export default function Display({ display,setDisplay,index,setIndex,results }){
     const dimension=300;
     return(
         <div id="display">
@@ -94,7 +107,12 @@ export default function Display({ display }){
             />
             <div>
                 <Details display={display}/>
-                <Controls multiple={Array.isArray(display)}/>
+                <Controls
+                    setDisplay={setDisplay}
+                    index={index}
+                    setIndex={setIndex}
+                    results={results}
+                />
             </div>
         </div>
     );

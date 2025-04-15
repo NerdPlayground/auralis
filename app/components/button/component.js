@@ -5,7 +5,8 @@ import { robotoCondensed } from "@/app/ui/fonts";
 
 export default function Button({ 
     icon, label, active, action, reaction, 
-    setMessage, setDisplay, button=true, element=null
+    setMessage, setDisplay, setResults, 
+    button=true, element=null
 }){
     const [isPending, startTransition]=useTransition();
     const buttonClasses=[
@@ -45,7 +46,12 @@ export default function Button({
                             content: "Success :)",
                             status: true, error: false,
                         });
-                        if(response?.display)
+                        
+                        if(response?.results){
+                            setResults(response.results);
+                            setDisplay(response.results[0]);
+                        }
+                        else if(response?.display)
                             setDisplay(response.display);
                     });
                 }}

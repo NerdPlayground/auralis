@@ -5,7 +5,7 @@ import Auth from "@/app/authorize/component";
 import Button from "@/app/components/button/component";
 import Message from "@/app/components/message/component";
 
-export default function Container({ message,setMessage,setDisplay }){
+export default function Container({ message,setMessage,setDisplay,setResults }){
     const item=useLocalStorage("spotify-package");
     const [access_token, refresh_token, expires]=item.split(' | ');
 
@@ -40,6 +40,7 @@ export default function Container({ message,setMessage,setDisplay }){
                         }}
                         setMessage={setMessage}
                         setDisplay={setDisplay}
+                        setResults={setResults}
                         active={item && !message.error}
                     />
                 );})

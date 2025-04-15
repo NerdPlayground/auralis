@@ -12,14 +12,23 @@ export default function Root(){
     });
     const [message, setMessage]=useState(initialState);
     const [display, setDisplay]=useState(null);
+    const [results, setResults]=useState(null);
+    const [index, setIndex]=useState(0);
 
     return (
         <div id="platform">
-            <Display display={display}/>
+            <Display
+                index={index}
+                setIndex={setIndex}
+                display={display}
+                setDisplay={setDisplay}
+                results={results}
+            />
             <Container
                 message={message}
                 setMessage={setMessage}
                 setDisplay={setDisplay}
+                setResults={setResults}
             />
         </div>
     );
