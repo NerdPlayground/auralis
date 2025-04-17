@@ -59,18 +59,17 @@ export default function Container({ message,setMessage,setDisplay,setResults }){
                     ))
                 }</div>
             </div>
+            {menuItems.length>1 &&
             <div className={styles.embla__dots}>{
                 scrollSnaps.map((_,index)=>(
                     <Dot
                         key={index}
                         onClick={() => onDotClick(index)}
-                        className={`
-                            ${styles.embla__dot} 
-                            ${index===selectedIndex?styles.embla__selected:''}`
-                        }
+                        className={`${styles.embla__dot} 
+                        ${index===selectedIndex?styles.embla__selected:''}`}
                     />
                 ))
-            }</div>
+            }</div>}
             <Message content={message}/>
         </div>
     );
