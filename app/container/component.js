@@ -1,5 +1,5 @@
 import { useLocalStorage } from "@/app/lib/hooks";
-import { getCurrentlyPlaying } from "@/app/lib/actions";
+import { getCurrentlyPlaying, getTopTracks } from "@/app/lib/actions";
 import styles from "./styles.module.scss";
 import Auth from "@/app/authorize/component";
 import Button from "@/app/components/button/component";
@@ -14,6 +14,12 @@ export default function Container({ message,setMessage,setDisplay,setResults }){
             icon:"playing",
             label: "Get Currently Playing",
             method: getCurrentlyPlaying,
+            arguments: [access_token],
+        },
+        {
+            icon:"playing",
+            label: "Get Your Top Tracks",
+            method: getTopTracks,
             arguments: [access_token],
         },
     ]);

@@ -12,6 +12,7 @@ function errorDescription(status){
 
 export async function handleAuthorization(){
     const SCOPES=Object.freeze([
+        "user-top-read",
         "playlist-modify-public",
         "playlist-modify-private",
         "user-read-currently-playing",
@@ -91,6 +92,15 @@ export async function refreshAccessToken(refresh_token){
     }));
 }
 
+function getTrackDetails(item){
+    return{
+        name: item?.name,
+        cover: item?.album?.images[1].url,
+        artists: item?.artists?.
+        map(artist=>artist.name).join(", "),
+    }
+}
+
 export async function getCurrentlyPlaying(access_token){
     const response=await fetch("https://api.spotify.com/v1/me/player/currently-playing",{
         headers:{
@@ -115,11 +125,37 @@ export async function getCurrentlyPlaying(access_token){
     const item=results?.item;
     return{
         success: true,
-        display:{
-            name: item?.name,
-            cover: item?.album?.images[1].url,
-            artists: item?.artists?.
-            map(artist=>artist.name).join(", "),
-        }
+        display: getTrackDetails(item),
     };
+}
+
+export async function getTopTracks(access_token){
+    const params=new URLSearchParams();
+    params.append("time_range","long_term");
+    params.append("limit",5);
+    const response=await fetch(`https://api.spotify.com/v1/me/top/tracks?${params}`,{
+        headers:{
+            "Authorization": `Bearer ${access_token}`,
+        }
+    });
+
+    const results=!response.body? null: await response.json();
+    if(!response.ok){
+        const {status,message}=results.error;
+        console.log("==================================================");
+        console.log(`Error: ${status}`);
+        console.log(`Description: ${message}`); 
+        console.log("==================================================");
+
+        return{
+            success: false, type: `${status}`,
+            message: errorDescription(status),
+        }
+    }
+
+    const items=results?.items;
+    return{
+        success: true,
+        results: items.map(item=>getTrackDetails(item)),
+    }
 }
