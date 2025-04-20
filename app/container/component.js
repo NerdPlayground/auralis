@@ -22,7 +22,7 @@ export default function Container({ message,setMessage,setDisplay,setResults }){
             arguments: [access_token],
         },
         {
-            icon:"playing",
+            icon:"top",
             label: "Get Your Top Tracks",
             method: getTopTracks,
             arguments: [access_token],
