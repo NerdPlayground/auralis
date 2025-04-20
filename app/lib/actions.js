@@ -92,21 +92,10 @@ export async function refreshAccessToken(refresh_token){
     }));
 }
 
-function getTrackDetails(item){
-    return{
-        name: item?.name,
-        cover: item?.album?.images[1].url,
-        artists: item?.artists?.
-        map(artist=>artist.name).join(", "),
-    }
-}
-
-export async function getCurrentlyPlaying(access_token){
-    const response=await fetch("https://api.spotify.com/v1/me/player/currently-playing",{
-        headers:{
-            "Authorization": `Bearer ${access_token}`,
-        }
-    });
+async function performAction(url,access_token=null){
+    let headers={}
+    if(access_token) headers.Authorization=`Bearer ${access_token}`;
+    const response=await fetch(url,{headers: headers});
 
     const results=!response.body? null: await response.json();
     if(!response.ok){
@@ -121,7 +110,26 @@ export async function getCurrentlyPlaying(access_token){
             message: errorDescription(status),
         }
     }
+
+    return results;
+}
+
+function getTrackDetails(item){
+    return{
+        name: item?.name,
+        cover: item?.album?.images[1].url,
+        artists: item?.artists?.
+        map(artist=>artist.name).join(", "),
+    }
+}
+
+export async function getCurrentlyPlaying(access_token){
+    const results=await performAction(
+        "https://api.spotify.com/v1/me/player/currently-playing",
+        access_token
+    );
     
+    if(results?.success===false) return results;
     const item=results?.item;
     return{
         success: true,
@@ -133,26 +141,12 @@ export async function getTopTracks(access_token){
     const params=new URLSearchParams();
     params.append("time_range","long_term");
     params.append("limit",5);
-    const response=await fetch(`https://api.spotify.com/v1/me/top/tracks?${params}`,{
-        headers:{
-            "Authorization": `Bearer ${access_token}`,
-        }
-    });
+    const results=await performAction(
+        `https://api.spotify.com/v1/me/top/tracks?${params}`,
+        access_token
+    );
 
-    const results=!response.body? null: await response.json();
-    if(!response.ok){
-        const {status,message}=results.error;
-        console.log("==================================================");
-        console.log(`Error: ${status}`);
-        console.log(`Description: ${message}`); 
-        console.log("==================================================");
-
-        return{
-            success: false, type: `${status}`,
-            message: errorDescription(status),
-        }
-    }
-
+    if(results?.success===false) return results;
     const items=results?.items;
     return{
         success: true,
