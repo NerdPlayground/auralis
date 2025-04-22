@@ -99,6 +99,7 @@ export default function Display({ display,setDisplay,index,setIndex,results }){
         <div id="display">
             <Image
                 alt="Cover Image" 
+                priority={true}
                 width={dimension} height={dimension}
                 src={
                     !display?"/default.png":
