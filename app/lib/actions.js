@@ -12,6 +12,8 @@ function errorDescription(status){
 
 export async function handleAuthorization(){
     const SCOPES=Object.freeze([
+        "user-read-private",
+        "user-read-email",
         "user-top-read",
         "playlist-modify-public",
         "playlist-modify-private",
@@ -114,6 +116,22 @@ async function performAction(url,access_token=null){
     return results;
 }
 
+export async function getUserProfile(access_token){
+    const results=await performAction(
+        "https://api.spotify.com/v1/me/",
+        access_token,
+    );
+
+    if(results?.success===false) return results;
+    const user_id=results?.id;
+    const display_name=results?.display_name;
+    return{
+        success: true,
+        user_id: user_id,
+        display_name: display_name,
+    };
+}
+
 function getTrackDetails(item){
     return{
         name: item?.name,
@@ -137,7 +155,7 @@ export async function getCurrentlyPlaying(access_token){
     };
 }
 
-export async function getTopTracks(access_token){
+export async function getTopTracks(access_token,user_id){
     const params=new URLSearchParams();
     params.append("time_range","long_term");
     params.append("limit",5);

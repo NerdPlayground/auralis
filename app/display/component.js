@@ -2,7 +2,7 @@ import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { anton, robotoCondensed } from "@/app/ui/fonts";
 
-function Details({ display }){
+function Details({ display,display_name }){
     const name_container=useRef(null);
     const name_marquee=useRef(null);
     const artists_container=useRef(null);
@@ -53,7 +53,7 @@ function Details({ display }){
             </div>
             <div className={`${robotoCondensed.className}`} ref={artists_container}>
                 <div ref={artists_marquee}>{
-                    !display?`Fellow Listener`:
+                    !display?`${display_name ?? "Fellow Listener"}`:
                     display?.artists? display.artists:`No Artists`
                 }</div>
             </div>
@@ -62,7 +62,6 @@ function Details({ display }){
 }
 
 function Controls({ setDisplay,index,setIndex,results }){
-
     function changeDisplay(direction){
         let nextIndex=index+direction;
         if(nextIndex>=0 && nextIndex<results.length){
@@ -93,7 +92,10 @@ function Controls({ setDisplay,index,setIndex,results }){
     );
 }
 
-export default function Display({ display,setDisplay,index,setIndex,results }){
+export default function Display({ 
+    display_name,display,
+    setDisplay,index,setIndex,results
+}){
     const dimension=300;
     return(
         <div id="display">
@@ -107,7 +109,10 @@ export default function Display({ display,setDisplay,index,setIndex,results }){
                 }
             />
             <div>
-                <Details display={display}/>
+                <Details
+                    display={display}
+                    display_name={display_name}
+                />
                 <Controls
                     setDisplay={setDisplay}
                     index={index}

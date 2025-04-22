@@ -7,10 +7,10 @@ import { Dot, useDot } from "./dots";
 import Button from "@/app/components/button/component";
 import useEmblaCarousel from "embla-carousel-react";
 
-export default function Container({ message,setMessage,setDisplay,setResults }){
-    const item=useLocalStorage("spotify-package");
-    const [access_token, refresh_token, expires]=item.split(' | ');
-
+export default function Container({ 
+    item,user_id,access_token,refresh_token,
+    message,setMessage,setDisplay,setResults
+}){
     const [emblaRef,emblaApi]=useEmblaCarousel({});
     const {selectedIndex,scrollSnaps,onDotClick}=useDot(emblaApi);
 
@@ -25,7 +25,7 @@ export default function Container({ message,setMessage,setDisplay,setResults }){
             icon:"top",
             label: "Get Your Top Tracks",
             method: getTopTracks,
-            arguments: [access_token],
+            arguments: [access_token,user_id],
         },
     ]);
 
