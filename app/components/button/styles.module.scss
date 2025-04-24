@@ -27,6 +27,7 @@
     & > button,& > p,& > a{
         padding: 10px;
         @include dimensions($full-dimension:($button,$bheight));
+        @include noSelect();
         font-size: 18px;
         text-align: center;
         color: $black;

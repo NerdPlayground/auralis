@@ -2,7 +2,7 @@ import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { anton, robotoCondensed } from "@/app/ui/fonts";
 
-function Details({ display }){
+function Details({ display,display_name }){
     const name_container=useRef(null);
     const name_marquee=useRef(null);
     const artists_container=useRef(null);
@@ -53,7 +53,7 @@ function Details({ display }){
             </div>
             <div className={`${robotoCondensed.className}`} ref={artists_container}>
                 <div ref={artists_marquee}>{
-                    !display?`Fellow Listener`:
+                    !display?`${display_name ?? "Fellow Listener"}`:
                     display?.artists? display.artists:`No Artists`
                 }</div>
             </div>
@@ -61,31 +61,47 @@ function Details({ display }){
     );
 }
 
-function Controls({ multiple }){
+function Controls({ setDisplay,index,setIndex,results }){
+    function changeDisplay(direction){
+        let nextIndex=index+direction;
+        if(nextIndex>=0 && nextIndex<results.length){
+            setIndex(nextIndex);
+            setDisplay(results[nextIndex]);                                
+        }
+    }
+
     return(
         <div>
-            <svg 
-                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
-                className={`${multiple?"":"disabled-button"}`}
-            >
-                <path d="M5 15h14l-7-8-7 8Z"></path>
-            </svg>
-            <svg 
-                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
-                className={`${multiple?"":"disabled-button"}`}
-            >
-                <path d="m11.998 17 7-8h-14l7 8Z"></path>
-            </svg>
+            <div onClick={results?()=>changeDisplay(-1):null}>
+                <svg 
+                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                    className={`${results?"":"disabled-button"}`}
+                >
+                    <path d="M5 15h14l-7-8-7 8Z"></path>
+                </svg>
+            </div>
+            <div onClick={results?()=>changeDisplay(1):null}>
+                <svg 
+                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                    className={`${results?"":"disabled-button"}`}
+                >
+                    <path d="m11.998 17 7-8h-14l7 8Z"></path>
+                </svg>
+            </div>
         </div>
     );
 }
 
-export default function Display({ display }){
+export default function Display({ 
+    display_name,display,
+    setDisplay,index,setIndex,results
+}){
     const dimension=300;
     return(
         <div id="display">
             <Image
                 alt="Cover Image" 
+                priority={true}
                 width={dimension} height={dimension}
                 src={
                     !display?"/default.png":
@@ -93,8 +109,16 @@ export default function Display({ display }){
                 }
             />
             <div>
-                <Details display={display}/>
-                <Controls multiple={Array.isArray(display)}/>
+                <Details
+                    display={display}
+                    display_name={display_name}
+                />
+                <Controls
+                    setDisplay={setDisplay}
+                    index={index}
+                    setIndex={setIndex}
+                    results={results}
+                />
             </div>
         </div>
     );

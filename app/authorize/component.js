@@ -6,7 +6,7 @@ import { handleAuthorization, refreshAccessToken } from "@/app/lib/actions";
 
 export default function Auth({ item, message, setMessage, refresh_token }){
     return (
-        (item==="" || (message.error && message.type==="400"))?(
+        (item==="" || (message.error && message.type==="400" && message.segment==="0"))?(
             <Button
                 icon={"print"}
                 active={true}

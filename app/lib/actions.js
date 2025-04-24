@@ -1,8 +1,14 @@
 "use server";
 import { redirect } from 'next/navigation'
 
-function errorDescription(status){
+function errorDescription(status,segment=0){
     switch(status){
+        case 400: {
+            switch(segment){
+                case 0: return "The application access has been revoked. Please re-authorize";
+                case 1: return "The request has missing fields. Please contact support";
+            }
+        }
         case 401: return "Your access token has expired. Please get a new one";
         case 403: return "You can't perform this action. Please contact support";
         case 429: return "You have made too many requests. Please try again later";
@@ -12,6 +18,9 @@ function errorDescription(status){
 
 export async function handleAuthorization(){
     const SCOPES=Object.freeze([
+        "user-read-private",
+        "user-read-email",
+        "user-top-read",
         "playlist-modify-public",
         "playlist-modify-private",
         "user-read-currently-playing",
@@ -52,14 +61,10 @@ async function handleAccessToken(body){
         console.log(`Description: ${error_description}`);
         console.log("==================================================");
         
-        if(error==="invalid_grant") return {
-            success: false, type: "400",
-            message: "The application access has been revoked. Please re-authorize",
-        };
-
-        return {
-            success: false,
-            message: "There was an error in processing your request. Contact support",
+        const status=error==="invalid_grant"?400:0;
+        return{
+            success: false, type: `${status}`,
+            message: errorDescription(status),
         };
     }
 
@@ -91,12 +96,18 @@ export async function refreshAccessToken(refresh_token){
     }));
 }
 
-export async function getCurrentlyPlaying(access_token){
-    const response=await fetch("https://api.spotify.com/v1/me/player/currently-playing",{
-        headers:{
-            "Authorization": `Bearer ${access_token}`,
-        }
-    });
+async function performAction(url,access_token=null,method="GET",content_type="",body={}){
+    let headers={};
+    if(access_token) headers.Authorization=`Bearer ${access_token}`;
+    let options={method,headers};
+    if(method==="POST"){
+        options.headers["content-type"]=content_type;
+        options={
+            ...options,
+            body: JSON.stringify(body),
+        };
+    }
+    const response=await fetch(url,options);
 
     const results=!response.body? null: await response.json();
     if(!response.ok){
@@ -105,21 +116,103 @@ export async function getCurrentlyPlaying(access_token){
         console.log(`Error: ${status}`);
         console.log(`Description: ${message}`); 
         console.log("==================================================");
-
+        
+        const segment=message.includes("Missing")?1:0;
         return{
             success: false, type: `${status}`,
-            message: errorDescription(status),
+            message: errorDescription(status,segment),
         }
     }
+
+    return results;
+}
+
+export async function getUserProfile(access_token){
+    const results=await performAction(
+        "https://api.spotify.com/v1/me/",
+        access_token,
+    );
+
+    if(results?.success===false) return results;
+    const user_id=results?.id;
+    const display_name=results?.display_name;
+    return{
+        success: true,
+        user_id: user_id,
+        display_name: display_name,
+    };
+}
+
+function getTrackDetails(item){
+    return{
+        name: item?.name,
+        cover: item?.album?.images[1].url,
+        artists: item?.artists?.
+        map(artist=>artist.name).join(", "),
+    }
+}
+
+export async function getCurrentlyPlaying(access_token){
+    const results=await performAction(
+        "https://api.spotify.com/v1/me/player/currently-playing",
+        access_token
+    );
     
+    if(results?.success===false) return results;
     const item=results?.item;
     return{
         success: true,
-        display:{
-            name: item?.name,
-            cover: item?.album?.images[1].url,
-            artists: item?.artists?.
-            map(artist=>artist.name).join(", "),
-        }
+        display: getTrackDetails(item),
     };
+}
+
+export async function getTopTracks(access_token){
+    const quantity=50;
+    const params=new URLSearchParams();
+    params.append("time_range","long_term");
+    params.append("limit",quantity);
+    const results=await performAction(
+        `https://api.spotify.com/v1/me/top/tracks?${params}`,
+        access_token
+    );
+
+    if(results?.success===false) return results;
+    const tracks=results?.items;
+    return{
+        success: true,
+        message: `Here are 5 of your top tracks. There are a total of ${quantity}`,
+        results: tracks.map(item=>item.uri),
+        sample: tracks.slice(0,5).map(item=>getTrackDetails(item))
+    }
+}
+
+async function createPlaylist(access_token,user_id,data){
+    const results=await performAction(
+        `https://api.spotify.com/v1/users/${user_id}/playlists`,
+        access_token,"POST","application/json",data
+    );
+
+    if(results?.success===false) return results;
+    return{ playlist_id: results?.id };
+}
+
+export async function addTopTracks(access_token,user_id,tracks){
+    const create_results=await createPlaylist(access_token,user_id,{
+        name:"Top Tracks", public: false,
+        description:"A collection of your top tracks for the past year",
+    });
+
+    const playlist_id=create_results?.playlist_id;
+    if(!playlist_id) return create_results;
+
+    const results=await performAction(
+        `https://api.spotify.com/v1/playlists/${playlist_id}/tracks`,
+        access_token,"POST","application/json",tracks
+    );
+
+    if(results?.success===false) return results;
+    return{
+        success: true,
+        message: "Your playlist has been added to your account, enjoy :)",
+    }
 }
