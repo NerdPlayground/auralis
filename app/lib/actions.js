@@ -55,14 +55,10 @@ async function handleAccessToken(body){
         console.log(`Description: ${error_description}`);
         console.log("==================================================");
         
-        if(error==="invalid_grant") return {
-            success: false, type: "400",
-            message: "The application access has been revoked. Please re-authorize",
-        };
-
-        return {
-            success: false,
-            message: "There was an error in processing your request. Contact support",
+        const status=error==="invalid_grant"?400:0;
+        return{
+            success: false, type: `${status}`,
+            message: errorDescription(status),
         };
     }
 
