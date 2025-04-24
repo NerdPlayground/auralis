@@ -96,10 +96,18 @@ export async function refreshAccessToken(refresh_token){
     }));
 }
 
-async function performAction(url,access_token=null){
-    let headers={}
+async function performAction(url,access_token=null,method="GET",content_type="",body={}){
+    let headers={};
     if(access_token) headers.Authorization=`Bearer ${access_token}`;
-    const response=await fetch(url,{headers: headers});
+    let options={method,headers};
+    if(method==="POST"){
+        options.headers["content-type"]=content_type;
+        options={
+            ...options,
+            body: JSON.stringify(body),
+        };
+    }
+    const response=await fetch(url,options);
 
     const results=!response.body? null: await response.json();
     if(!response.ok){
@@ -108,10 +116,11 @@ async function performAction(url,access_token=null){
         console.log(`Error: ${status}`);
         console.log(`Description: ${message}`); 
         console.log("==================================================");
-
+        
+        const segment=message.includes("Missing")?1:0;
         return{
             success: false, type: `${status}`,
-            message: errorDescription(status),
+            message: errorDescription(status,segment),
         }
     }
 
@@ -157,19 +166,53 @@ export async function getCurrentlyPlaying(access_token){
     };
 }
 
-export async function getTopTracks(access_token,user_id){
+export async function getTopTracks(access_token){
+    const quantity=50;
     const params=new URLSearchParams();
     params.append("time_range","long_term");
-    params.append("limit",5);
+    params.append("limit",quantity);
     const results=await performAction(
         `https://api.spotify.com/v1/me/top/tracks?${params}`,
         access_token
     );
 
     if(results?.success===false) return results;
-    const items=results?.items;
+    const tracks=results?.items;
     return{
         success: true,
-        results: items.map(item=>getTrackDetails(item)),
+        message: `Here are 5 of your top tracks. There are a total of ${quantity}`,
+        results: tracks.map(item=>item.uri),
+        sample: tracks.slice(0,5).map(item=>getTrackDetails(item))
+    }
+}
+
+async function createPlaylist(access_token,user_id,data){
+    const results=await performAction(
+        `https://api.spotify.com/v1/users/${user_id}/playlists`,
+        access_token,"POST","application/json",data
+    );
+
+    if(results?.success===false) return results;
+    return{ playlist_id: results?.id };
+}
+
+export async function addTopTracks(access_token,user_id,tracks){
+    const create_results=await createPlaylist(access_token,user_id,{
+        name:"Top Tracks", public: false,
+        description:"A collection of your top tracks for the past year",
+    });
+
+    const playlist_id=create_results?.playlist_id;
+    if(!playlist_id) return create_results;
+
+    const results=await performAction(
+        `https://api.spotify.com/v1/playlists/${playlist_id}/tracks`,
+        access_token,"POST","application/json",tracks
+    );
+
+    if(results?.success===false) return results;
+    return{
+        success: true,
+        message: "Your playlist has been added to your account, enjoy :)",
     }
 }

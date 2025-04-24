@@ -1,20 +1,19 @@
-import { useLocalStorage } from "@/app/lib/hooks";
-import { getCurrentlyPlaying, getTopTracks } from "@/app/lib/actions";
 import styles from "./styles.module.scss";
 import Auth from "@/app/authorize/component";
 import Message from "@/app/components/message/component";
 import { Dot, useDot } from "./dots";
 import Button from "@/app/components/button/component";
 import useEmblaCarousel from "embla-carousel-react";
+import { addTopTracks, getCurrentlyPlaying, getTopTracks } from "@/app/lib/actions";
 
 export default function Container({ 
     item,user_id,access_token,refresh_token,
-    message,setMessage,setDisplay,setResults
+    message,setMessage,results,setResults,setDisplay
 }){
     const [emblaRef,emblaApi]=useEmblaCarousel({});
     const {selectedIndex,scrollSnaps,onDotClick}=useDot(emblaApi);
 
-    const menuItems=Object.freeze([
+    let menuItems=[
         {
             icon:"playing",
             label: "Get Currently Playing",
@@ -25,9 +24,16 @@ export default function Container({
             icon:"top",
             label: "Get Your Top Tracks",
             method: getTopTracks,
-            arguments: [access_token,user_id],
+            arguments: [access_token],
         },
-    ]);
+    ];
+
+    if(results) menuItems[1]={
+        icon:"new",
+        label: "Create Top Tracks Playlist",
+        method: addTopTracks,
+        arguments: [access_token,user_id,results],
+    };
 
     return(
         <div className={styles.container}>

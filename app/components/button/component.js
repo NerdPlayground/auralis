@@ -48,8 +48,11 @@ export default function Button({
                         });
                         
                         if(response?.results){
-                            setResults(response.results);
-                            setDisplay(response.results[0]);
+                            setResults({
+                                sample: response.sample,
+                                results: response.results,
+                            });
+                            setDisplay(response.sample[0]);
                         }
                         else if(response?.display)
                             setDisplay(response.display);

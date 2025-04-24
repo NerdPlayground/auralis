@@ -46,7 +46,7 @@ export default function Root(){
                 setIndex={setIndex}
                 display={display}
                 setDisplay={setDisplay}
-                results={results}
+                results={results?.sample}
             />
             <Container
                 item={item}
@@ -55,8 +55,9 @@ export default function Root(){
                 refresh_token={refresh_token}
                 message={message}
                 setMessage={setMessage}
-                setDisplay={setDisplay}
+                results={results?.results}
                 setResults={setResults}
+                setDisplay={setDisplay}
             />
         </div>
     );
