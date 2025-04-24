@@ -1,9 +1,14 @@
 "use server";
 import { redirect } from 'next/navigation'
 
-function errorDescription(status){
+function errorDescription(status,segment=0){
     switch(status){
-        case 400: return "The application access has been revoked. Please re-authorize";
+        case 400: {
+            switch(segment){
+                case 0: return "The application access has been revoked. Please re-authorize";
+                case 1: return "The request has missing fields. Please contact support";
+            }
+        }
         case 401: return "Your access token has expired. Please get a new one";
         case 403: return "You can't perform this action. Please contact support";
         case 429: return "You have made too many requests. Please try again later";

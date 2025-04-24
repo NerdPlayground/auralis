@@ -16,6 +16,7 @@ export default function Root(){
         status: false,
         type: null,
         error: false,
+        segment: "0",
         content: "-_-",
     });
     const [message, setMessage]=useState(initialState);
