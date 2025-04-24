@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 
 function errorDescription(status){
     switch(status){
+        case 400: return "The application access has been revoked. Please re-authorize";
         case 401: return "Your access token has expired. Please get a new one";
         case 403: return "You can't perform this action. Please contact support";
         case 429: return "You have made too many requests. Please try again later";
