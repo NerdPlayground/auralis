@@ -49,7 +49,7 @@ export default function Root(){
                 results={results?.sample}
             />
             <Container
-                item={item}
+                item={item===""}
                 user_id={user_id}
                 access_token={access_token}
                 refresh_token={refresh_token}
