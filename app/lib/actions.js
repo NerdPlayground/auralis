@@ -64,7 +64,7 @@ async function handleAccessToken(body){
         const status=error==="invalid_grant"?400:0;
         return{
             success: false, type: `${status}`,
-            message: errorDescription(status),
+            segment: "0", message: errorDescription(status),
         };
     }
 
@@ -119,7 +119,7 @@ async function performAction(url,access_token=null,method="GET",content_type="",
         
         const segment=message.includes("Missing")?1:0;
         return{
-            success: false, type: `${status}`,
+            success: false, type: `${status}`, segment: segment, 
             message: errorDescription(status,segment),
         }
     }
