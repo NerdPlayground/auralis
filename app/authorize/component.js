@@ -1,10 +1,9 @@
 "use client";
-import { redirect } from "next/navigation";
 import Button from "@/app/components/button/component";
 import { robotoCondensed } from "@/app/ui/fonts";
-import { handleAuthorization, refreshAccessToken } from "@/app/lib/actions";
+import { getUserProfile, handleAuthorization, handleEncryption, refreshAccessToken } from "@/app/lib/actions";
 
-export default function Auth({ item, message, setMessage, refresh_token }){
+export default function Auth({ item,user_details,message,setMessage,access_token,refresh_token }){
     return (
         (!item || (message.error && message.type==="400" && message.segment==="0"))?(
             <Button
@@ -27,13 +26,37 @@ export default function Auth({ item, message, setMessage, refresh_token }){
                     arguments: [refresh_token],
                 }}
                 setMessage={setMessage}
-                reaction={(response)=>{
+                reaction={async (response)=>{
                     const { access_token, refresh_token, expires_in }=response;
                     localStorage.setItem(
                         "spotify-package",
-                        `${access_token} | ${refresh_token} | ${expires_in}`
+                        await handleEncryption({
+                            details:`${access_token} | ${refresh_token} | ${expires_in}`
+                        })
                     );
-                    redirect("/");
+                    window.location.reload();
+                }}
+            />
+        ):
+        (!user_details)?(
+            <Button
+                icon={"question"}
+                active={true}
+                label={`Retrieve Your Information`}
+                action={{
+                    method: getUserProfile,
+                    arguments: [access_token],
+                }}
+                setMessage={setMessage}
+                reaction={async (response)=>{
+                    const {user_id , display_name}=response;
+                    localStorage.setItem(
+                        "spotify-user",
+                        await handleEncryption({
+                            details:`${user_id} | ${display_name}`
+                        })
+                    );
+                    window.location.reload();
                 }}
             />
         ):

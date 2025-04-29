@@ -7,7 +7,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { addTopTracks, getCurrentlyPlaying, getTopTracks } from "@/app/lib/actions";
 
 export default function Container({ 
-    item,user_id,access_token,refresh_token,
+    item,user_details,user_id,access_token,refresh_token,
     message,setMessage,results,setResults,setDisplay
 }){
     const [emblaRef,emblaApi]=useEmblaCarousel({});
@@ -40,8 +40,10 @@ export default function Container({
             <div>
                 <Auth
                     item={item}
+                    user_details={user_details}
                     message={message}
                     setMessage={setMessage}
+                    access_token={access_token}
                     refresh_token={refresh_token}
                 />
             </div>
@@ -60,7 +62,7 @@ export default function Container({
                             setMessage={setMessage}
                             setDisplay={setDisplay}
                             setResults={setResults}
-                            active={item && !message.error}
+                            active={item && user_details && !message.error}
                         />
                     ))
                 }</div>

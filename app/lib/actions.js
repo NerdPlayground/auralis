@@ -1,5 +1,6 @@
 "use server";
 import { redirect } from 'next/navigation'
+import { decrypt, encrypt } from './session';
 
 function errorDescription(status,segment=0){
     switch(status){
@@ -14,6 +15,14 @@ function errorDescription(status,segment=0){
         case 429: return "You have made too many requests. Please try again later";
         default: return "There was an error in processing your request. Contact support";
     }
+}
+
+export async function handleEncryption(payload){
+    return await encrypt(payload);
+}
+
+export async function handleDecryption(session){
+    return await decrypt(session);
 }
 
 export async function handleAuthorization(){
@@ -134,12 +143,10 @@ export async function getUserProfile(access_token){
     );
 
     if(results?.success===false) return results;
-    const user_id=results?.id;
-    const display_name=results?.display_name;
     return{
         success: true,
-        user_id: user_id,
-        display_name: display_name,
+        user_id: results?.id,
+        display_name: results?.display_name,
     };
 }
 
