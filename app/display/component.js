@@ -47,7 +47,7 @@ function Details({ display,display_name }){
         <div>
             <div className={`${anton.className}`} ref={name_container}>
                 <div ref={name_marquee}>{
-                    !display? `Welcome To Lotify`:
+                    !display? `Welcome To Auralis`:
                     display?.name? display.name:`Nothing Is Playing`
                 }</div>
             </div>
