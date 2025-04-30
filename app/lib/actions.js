@@ -40,7 +40,7 @@ export async function handleAuthorization(){
         response_type: "code",
         client_id: process.env.CLIENT_ID,
         scope: SCOPES.join(" "),
-        redirect_uri: "http://localhost:3000/authorize",
+        redirect_uri: `${process.env.APP_URL}/authorize`,
         state: process.env.STATE,
     });
 
