@@ -10,7 +10,7 @@
 }
 
 body{
-    background-color: $white;
+    background-color: $black;
     @include flex(column,center,center);
     @include dimensions(100vw,100vw,100vh,100vh);
 }
