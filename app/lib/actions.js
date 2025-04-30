@@ -1,6 +1,7 @@
 "use server";
 import { redirect } from 'next/navigation'
 import { decrypt, encrypt } from './session';
+import { headers } from 'next/headers';
 
 function errorDescription(status,segment=0){
     switch(status){
@@ -35,12 +36,13 @@ export async function handleAuthorization(){
         "user-read-currently-playing",
         "user-read-playback-state",
     ]);
+    const ORIGIN=(await headers()).headers.origin;
 
     const url_params=new URLSearchParams({
         response_type: "code",
         client_id: process.env.CLIENT_ID,
         scope: SCOPES.join(" "),
-        redirect_uri: `${process.env.APP_URL}/authorize`,
+        redirect_uri: `${ORIGIN}/authorize`,
         state: process.env.STATE,
     });
 
