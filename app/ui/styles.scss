@@ -70,6 +70,17 @@ $border: 2px;
                 & > div{
                     white-space: nowrap;
                     @include dimensions($full-height:100%);
+                    a{
+                        margin-right: 5px;
+                        color: $black;
+                        &:hover{
+                            text-decoration: underline;
+                            text-decoration-color: $black;
+                        }
+                        &:last-child{
+                            margin-right: 0;
+                        }
+                    }
                 }
             }
             & > :nth-child(1){

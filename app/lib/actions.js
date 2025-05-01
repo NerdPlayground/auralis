@@ -153,12 +153,17 @@ export async function getUserProfile(access_token){
 }
 
 function getTrackDetails(item){
-    return{
-        name: item?.name,
+    return !item?{}:{
+        name:{
+            label: item?.name,
+            url: item?.external_urls?.spotify,
+        },
         cover: item?.album?.images[1].url,
-        artists: item?.artists?.
-        map(artist=>artist.name).join(", "),
-    }
+        artists: item?.artists?.map(artist=>({
+            label: artist.name,
+            url: artist.external_urls.spotify
+        })),
+    };
 }
 
 export async function getCurrentlyPlaying(access_token){
