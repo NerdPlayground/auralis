@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { anton, robotoCondensed } from "@/app/ui/fonts";
+import Link from "next/link";
 
 function Details({ display,display_name }){
     const name_container=useRef(null);
@@ -47,14 +48,24 @@ function Details({ display,display_name }){
         <div>
             <div className={`${anton.className}`} ref={name_container}>
                 <div ref={name_marquee}>{
-                    !display? `Welcome To Lotify`:
-                    display?.name? display.name:`Nothing Is Playing`
+                    !display? `Welcome To Auralis`:
+                    !display?.name? `Nothing Is Playing`:(
+                        <Link href={display.name.url} target="_blank">
+                            {display.name.label}
+                        </Link>
+                    )
                 }</div>
             </div>
             <div className={`${robotoCondensed.className}`} ref={artists_container}>
                 <div ref={artists_marquee}>{
                     !display?`${display_name ?? "Fellow Listener"}`:
-                    display?.artists? display.artists:`No Artists`
+                    !display?.artists? `No Artists`:(
+                        display.artists.map((artist,index,array)=>(
+                            <Link key={index} href={artist.url} target="_blank">
+                                {`${artist.label}${index===array.length-1?"":","}`}
+                            </Link>
+                        ))
+                    )
                 }</div>
             </div>
         </div>

@@ -1,5 +1,7 @@
 "use server";
 import { redirect } from 'next/navigation'
+import { decrypt, encrypt } from './session';
+import { headers } from 'next/headers';
 
 function errorDescription(status,segment=0){
     switch(status){
@@ -16,6 +18,14 @@ function errorDescription(status,segment=0){
     }
 }
 
+export async function handleEncryption(payload){
+    return await encrypt(payload);
+}
+
+export async function handleDecryption(session){
+    return await decrypt(session);
+}
+
 export async function handleAuthorization(){
     const SCOPES=Object.freeze([
         "user-read-private",
@@ -26,12 +36,13 @@ export async function handleAuthorization(){
         "user-read-currently-playing",
         "user-read-playback-state",
     ]);
+    const ORIGIN=(await headers()).headers.origin;
 
     const url_params=new URLSearchParams({
         response_type: "code",
         client_id: process.env.CLIENT_ID,
         scope: SCOPES.join(" "),
-        redirect_uri: "http://localhost:3000/authorize",
+        redirect_uri: `${ORIGIN}/authorize`,
         state: process.env.STATE,
     });
 
@@ -64,7 +75,7 @@ async function handleAccessToken(body){
         const status=error==="invalid_grant"?400:0;
         return{
             success: false, type: `${status}`,
-            message: errorDescription(status),
+            segment: "0", message: errorDescription(status),
         };
     }
 
@@ -119,7 +130,7 @@ async function performAction(url,access_token=null,method="GET",content_type="",
         
         const segment=message.includes("Missing")?1:0;
         return{
-            success: false, type: `${status}`,
+            success: false, type: `${status}`, segment: segment, 
             message: errorDescription(status,segment),
         }
     }
@@ -134,22 +145,25 @@ export async function getUserProfile(access_token){
     );
 
     if(results?.success===false) return results;
-    const user_id=results?.id;
-    const display_name=results?.display_name;
     return{
         success: true,
-        user_id: user_id,
-        display_name: display_name,
+        user_id: results?.id,
+        display_name: results?.display_name,
     };
 }
 
 function getTrackDetails(item){
-    return{
-        name: item?.name,
+    return !item?{}:{
+        name:{
+            label: item?.name,
+            url: item?.external_urls?.spotify,
+        },
         cover: item?.album?.images[1].url,
-        artists: item?.artists?.
-        map(artist=>artist.name).join(", "),
-    }
+        artists: item?.artists?.map(artist=>({
+            label: artist.name,
+            url: artist.external_urls.spotify
+        })),
+    };
 }
 
 export async function getCurrentlyPlaying(access_token){

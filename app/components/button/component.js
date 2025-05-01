@@ -36,6 +36,7 @@ export default function Button({
                             setMessage({
                                 status: true, error: true,
                                 type: response?.type,
+                                segment: response?.segment,
                                 content: response.message
                             });
                             return;

@@ -1,8 +1,8 @@
 import "@/app/ui/styles.scss";
 
 export const metadata = {
-    title: "Spotify",
-    description: "Some fun with Spotify code",
+    title: "Auralis",
+    description: "Let's have fun with your Spotify account",
 };
   
 export default function RootLayout({ children }) {

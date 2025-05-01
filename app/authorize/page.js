@@ -4,7 +4,7 @@ import styles from "./styles.module.scss";
 import { use, useEffect, useState } from "react";
 import Button from "@/app/components/button/component";
 import { robotoCondensed } from "@/app/ui/fonts";
-import { getAccessToken } from "@/app/lib/actions";
+import { getAccessToken, handleEncryption } from "@/app/lib/actions";
 import Message from "@/app/components/message/component";
 
 export default function Page({ searchParams }){
@@ -68,11 +68,13 @@ export default function Page({ searchParams }){
                             method: getAccessToken,
                             arguments: [spotifyParams],
                         }}
-                        reaction={(response)=>{
+                        reaction={async (response)=>{
                             const { access_token, refresh_token, expires_in }=response;
                             localStorage.setItem(
                                 "spotify-package",
-                                `${access_token} | ${refresh_token} | ${expires_in}`
+                                await handleEncryption({
+                                    details:`${access_token} | ${refresh_token} | ${expires_in}`
+                                })
                             );
                         }}
                         setMessage={setMessage}

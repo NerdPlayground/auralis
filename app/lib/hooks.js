@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
+import { handleDecryption } from "./actions";
 
 export function useLocalStorage(key){
     const [storedItem, setStoredItem]=useState("");
 
     useEffect(()=>{
-        const item=localStorage.getItem(key);
-        if(item) setStoredItem(item);
+        (async function fetchData(){
+            const item=localStorage.getItem(key);
+            const results=await handleDecryption(item,key);
+            if(item) setStoredItem(results?.details);
+        })();
     },[key]);
 
     return storedItem;
