@@ -25,6 +25,12 @@ body{
     cursor: not-allowed !important;
 }
 
+.grey{
+    $color: color.scale($black,$lightness:30%) !important;
+    border-color: $color;
+    background-color: $color;
+}
+
 a{
     text-align: center;
     text-decoration: none;
@@ -110,7 +116,6 @@ $border: 2px;
     }
     & > :nth-child(3){
         position: absolute;
-        
         top: -16px;
         left: -16px;
         @include dimensions($square:30px);
