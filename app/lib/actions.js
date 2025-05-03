@@ -28,13 +28,9 @@ export async function handleDecryption(session){
 
 export async function handleAuthorization(){
     const SCOPES=Object.freeze([
-        "user-read-private",
-        "user-read-email",
         "user-top-read",
-        "playlist-modify-public",
         "playlist-modify-private",
         "user-read-currently-playing",
-        "user-read-playback-state",
     ]);
     const ORIGIN=(await headers()).headers.origin;
 
