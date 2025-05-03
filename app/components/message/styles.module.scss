@@ -1,19 +1,40 @@
 @use "@/app/ui/colors.scss" as *;
 @use "@/app/ui/functions.scss" as *;
 
+.message_container{
+    $space: 5px;
+    $icon-size: 60px;
+    $message: calc(100% - #{$icon-size});
+    margin-top: 5px;
+    @include flex(row,center,space-between);
+    border-radius: 5px;
+    border: 2px solid $black;
+    @include dimensions($full-width:100%);
+    & > p{
+        min-height: $icon-size;
+        @include dimensions($full-width:$message);
+    }
+    & > div{
+        padding: 5px;
+        @include flex(row,center,center);
+        @include dimensions($square:$icon-size);
+        & > img{
+            @include dimensions($square:100%);
+        }
+    }
+}
+
 .message{
     $size: 16px;
     padding: 5px;
     @include flex(column,center,center);
-    @include dimensions($full-dimension:(100%,60px));
     @include noSelect();
     font-size: $size;
     line-height: $size;
     text-align: center;
     font-family: monospace;
     font-weight: bold;
-    border-radius: 5px;
-    border: 2px solid $black;
+    border-right: 1px solid $black;
 }
 
 .error_message{
