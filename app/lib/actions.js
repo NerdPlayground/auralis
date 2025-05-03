@@ -158,6 +158,7 @@ function getTrackDetails(item){
             label: item?.name,
             url: item?.external_urls?.spotify,
         },
+        explicit: item?.explicit,
         cover: item?.album?.images[1].url,
         artists: item?.artists?.map(artist=>({
             label: artist.name,

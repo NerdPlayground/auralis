@@ -1,0 +1,5 @@
+@use "@/app/ui/colors.scss" as *;
+
+.explicit{
+    border-color: $red !important;
+}

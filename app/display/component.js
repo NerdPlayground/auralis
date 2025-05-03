@@ -1,7 +1,8 @@
 import Image from "next/image";
-import { useEffect, useRef } from "react";
-import { anton, robotoCondensed } from "@/app/ui/fonts";
 import Link from "next/link";
+import { useEffect, useRef } from "react";
+import styles from "./styles.module.scss";
+import { anton, robotoCondensed } from "@/app/ui/fonts";
 
 function Details({ display,display_name }){
     const name_container=useRef(null);
@@ -109,7 +110,7 @@ export default function Display({
 }){
     const dimension=300;
     return(
-        <div id="display">
+        <div id="display" className={`${display?.explicit?styles.explicit:''}`}>
             <Image
                 alt="Cover Image" 
                 priority={true}
@@ -131,6 +132,10 @@ export default function Display({
                     results={results}
                 />
             </div>
+            {display?.explicit &&
+            <span className={`${anton.className}`}>
+                {`18+`}
+            </span>}
         </div>
     );
 }
