@@ -89,10 +89,11 @@ export async function getAccessToken({code, state}){
         message: "The state provided does not match the application's state. Use the appropriate authorization flow",
     };
 
+    const ORIGIN=(await headers()).headers.origin;
     return handleAccessToken(new URLSearchParams({
         code:code,
         grant_type:"authorization_code",
-        redirect_uri:"http://localhost:3000/authorize",
+        redirect_uri:`${ORIGIN}/authorize`,
     }));
 }
 
