@@ -165,6 +165,10 @@ function getTrackDetails(item){
 }
 
 export async function getCurrentlyPlaying(access_token){
+    console.log("==================================================");
+    console.log(access_token);
+    console.log("==================================================");
+    
     const results=await performAction(
         "https://api.spotify.com/v1/me/player/currently-playing",
         access_token
