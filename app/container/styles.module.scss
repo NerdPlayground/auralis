@@ -5,11 +5,11 @@
     @include flex(column,center,center);
     @include dimensions($full-width:100%);
     & > :first-child,& > :last-child{
-        padding: 5px;
-        @include flex(column,center,center);
         @include dimensions($full-width:100%);
     }
     & > :first-child{
+        padding: 5px;
+        @include flex(column,center,center);
         & > div{
             flex-direction: row-reverse !important;
             & > :nth-child(1){

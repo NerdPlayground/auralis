@@ -25,6 +25,12 @@ body{
     cursor: not-allowed !important;
 }
 
+.grey{
+    $color: color.scale($black,$lightness:30%) !important;
+    border-color: $color;
+    background-color: $color;
+}
+
 a{
     text-align: center;
     text-decoration: none;
@@ -41,6 +47,7 @@ $border: 2px;
 }
 
 #display{
+    position: relative;
     margin-bottom: 20px;
     padding: $p-padding;
     border: $border solid $black;
@@ -107,12 +114,23 @@ $border: 2px;
             }
         }
     }
+    & > :nth-child(3){
+        position: absolute;
+        top: -16px;
+        left: -16px;
+        @include dimensions($square:30px);
+        @include flex(row,center,center);
+        text-align: center;
+        color: $white;
+        border-radius: 50%;
+        background-color: $red;
+    }
 }
 
 #authorize{
     height: 100%;
     max-height: 100%;
-    & > *{
+    & > :first-child{
         padding: 5px;
         @include flex(column,center,center);
         @include dimensions($full-width:100%);

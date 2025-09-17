@@ -35,6 +35,8 @@ export default function Container({
         arguments: [access_token,user_id,results],
     };
 
+    const active=item && user_details && !message.error;
+
     return(
         <div className={styles.container}>
             <div>
@@ -51,7 +53,6 @@ export default function Container({
                 <div className={styles.embla__container}>{
                     menuItems.map(menuItem=>(
                         <Button
-                            classes={styles.embla__slide}
                             icon={menuItem.icon}
                             key={menuItem.label}
                             label={menuItem.label}
@@ -62,7 +63,11 @@ export default function Container({
                             setMessage={setMessage}
                             setDisplay={setDisplay}
                             setResults={setResults}
-                            active={item && user_details && !message.error}
+                            active={active}
+                            classes={{
+                                icon: `${active?"":"grey"}`,
+                                container: styles.embla__slide,
+                            }}
                         />
                     ))
                 }</div>

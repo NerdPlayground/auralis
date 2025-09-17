@@ -1,7 +1,8 @@
 import Image from "next/image";
-import { useEffect, useRef } from "react";
-import { anton, robotoCondensed } from "@/app/ui/fonts";
 import Link from "next/link";
+import { useEffect, useRef } from "react";
+import styles from "./styles.module.scss";
+import { anton, robotoCondensed } from "@/app/ui/fonts";
 
 function Details({ display,display_name }){
     const name_container=useRef(null);
@@ -73,6 +74,8 @@ function Details({ display,display_name }){
 }
 
 function Controls({ setDisplay,index,setIndex,results }){
+    const GREY="grey",DISABLED="disabled-button";
+
     function changeDisplay(direction){
         let nextIndex=index+direction;
         if(nextIndex>=0 && nextIndex<results.length){
@@ -83,18 +86,24 @@ function Controls({ setDisplay,index,setIndex,results }){
 
     return(
         <div>
-            <div onClick={results?()=>changeDisplay(-1):null}>
+            <div 
+                className={`${!results?GREY:index===0?GREY:""}`}
+                onClick={!results?null:index===0?null:()=>changeDisplay(-1)} 
+            >
                 <svg 
                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
-                    className={`${results?"":"disabled-button"}`}
+                    className={`${!results?DISABLED:index===0?DISABLED:""}`}
                 >
                     <path d="M5 15h14l-7-8-7 8Z"></path>
                 </svg>
             </div>
-            <div onClick={results?()=>changeDisplay(1):null}>
+            <div
+                className={`${!results?GREY:index===results.length-1?GREY:""}`}
+                onClick={!results?null:index===results.length-1?null:()=>changeDisplay(1)}
+            >
                 <svg 
                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
-                    className={`${results?"":"disabled-button"}`}
+                    className={`${!results?DISABLED:index===results.length-1?DISABLED:""}`}
                 >
                     <path d="m11.998 17 7-8h-14l7 8Z"></path>
                 </svg>
@@ -109,7 +118,7 @@ export default function Display({
 }){
     const dimension=300;
     return(
-        <div id="display">
+        <div id="display" className={`${display?.explicit?styles.explicit:''}`}>
             <Image
                 alt="Cover Image" 
                 priority={true}
@@ -131,6 +140,10 @@ export default function Display({
                     results={results}
                 />
             </div>
+            {display?.explicit &&
+            <span className={`${anton.className}`}>
+                {`18+`}
+            </span>}
         </div>
     );
 }

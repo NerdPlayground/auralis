@@ -6,7 +6,7 @@ import { robotoCondensed } from "@/app/ui/fonts";
 export default function Button({ 
     icon, label, active, action, reaction, 
     setMessage, setDisplay, setResults, 
-    button=true, element=null, classes=""
+    button=true, element=null, classes={}
 }){
     const [isPending, startTransition]=useTransition();
     const buttonClasses=[
@@ -16,8 +16,8 @@ export default function Button({
     ];
 
     return (
-        <div className={`${styles.button_container} ${classes}`}>
-            <div>
+        <div className={`${styles.button_container} ${classes?.container}`}>
+            <div className={`${classes?.icon}`}>
                 <Icon label={icon}/>
             </div>
             {!button?element:
