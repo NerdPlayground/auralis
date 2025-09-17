@@ -5,14 +5,15 @@ import { headers } from 'next/headers';
 
 function errorDescription(status,segment=0){
     switch(status){
-        case 400: {
-            switch(segment){
-                case 0: return "The application access has been revoked. Please re-authorize";
-                case 1: return "The request has missing fields. Please contact support";
-            }
-        }
+        case 400: {switch(segment){
+            case 0: return "The application access has been revoked. Please re-authorize";
+            case 1: return "The request has missing fields. Please contact support";
+        }}
         case 401: return "Your access token has expired. Please get a new one";
-        case 403: return "You can't perform this action. Please contact support";
+        case 403: {switch(segment){
+            case 0: return "You can't perform this action. Please contact support";
+            case 1: return "Seems like you aren't registered. We are working on that feature";
+        }}
         case 429: return "You have made too many requests. Please try again later";
         default: return "There was an error in processing your request. Contact support";
     }
@@ -33,6 +34,7 @@ export async function handleAuthorization(){
         "user-read-currently-playing",
     ]);
     const ORIGIN=(await headers()).headers.origin;
+    console.log(ORIGIN);
 
     const url_params=new URLSearchParams({
         response_type: "code",
@@ -115,21 +117,36 @@ async function performAction(url,access_token=null,method="GET",content_type="",
             body: JSON.stringify(body),
         };
     }
-    const response=await fetch(url,options);
 
-    const results=!response.body? null: await response.json();
-    if(!response.ok){
-        const {status,message}=results.error;
+    const response=await fetch(url,options);
+    let results=null;
+    try{
+        results=!response.body? null: await response.json();
+        if(!response.ok){
+            const {status,message}=results.error;
+            console.log("==================================================");
+            console.log(`Error: ${status}`);
+            console.log(`Description: ${message}`);
+            console.log("==================================================");
+            
+            const segment=message.includes("Missing")?1:0;
+            return{
+                success: false, type: `${status}`, segment: segment, 
+                message: errorDescription(status,segment),
+            }
+        }
+    }
+    catch(error){
+        const status=response.status;
         console.log("==================================================");
         console.log(`Error: ${status}`);
-        console.log(`Description: ${message}`); 
+        console.log(`${error}`);
         console.log("==================================================");
-        
-        const segment=message.includes("Missing")?1:0;
+
         return{
-            success: false, type: `${status}`, segment: segment, 
-            message: errorDescription(status,segment),
-        }
+            success: false, type: `${status}`,
+            message: errorDescription(status,1),
+        };
     }
 
     return results;
@@ -169,9 +186,6 @@ export async function getCurrentlyPlaying(access_token){
         "https://api.spotify.com/v1/me/player/currently-playing",
         access_token
     );
-    console.log("==================================================");
-    console.log(results);
-    console.log("==================================================");
     
     if(results?.success===false) return results;
     const item=results?.item;
