@@ -16,7 +16,7 @@ export default function Root(){
         type: null,
         error: false,
         segment: "0",
-        content: "-_-",
+        content: "- •••• •- -• -•-  -•-- --- ••-",
     });
     const [message, setMessage]=useState(initialState);
     const [display, setDisplay]=useState(null);
