@@ -1,9 +1,12 @@
 "use client";
 import Button from "@/app/components/button/component";
 import { robotoCondensed } from "@/app/ui/fonts";
-import { getUserProfile, handleAuthorization, handleEncryption, refreshAccessToken } from "@/app/lib/actions";
+import { getUserProfile, handleAuthorization, handleEncryption, refreshAccessToken, joinAuralis } from "@/app/lib/actions";
 
-export default function Auth({ item,user_details,message,setMessage,access_token,refresh_token }){
+export default function Auth({ 
+    item,user_details,registered_email,auralis_member,
+    message,setMessage,access_token,refresh_token
+}){
     return (
         (!item || (message.error && message.type==="400" && message.segment==="0"))?(
             <Button
@@ -49,13 +52,33 @@ export default function Auth({ item,user_details,message,setMessage,access_token
                 }}
                 setMessage={setMessage}
                 reaction={async (response)=>{
-                    const {user_id , display_name}=response;
+                    const {user_id , display_name, user_email}=response;
                     localStorage.setItem(
                         "spotify-user",
                         await handleEncryption({
-                            details:`${user_id} | ${display_name}`
+                            details:`${user_id} | ${user_email} | ${display_name}`
                         })
                     );
+                    window.location.reload();
+                }}
+            />
+        ):
+        (!auralis_member)?(
+            <Button
+                icon={"join"}
+                active={true}
+                label={"Join Others On Auralis"}
+                action={{
+                    method: joinAuralis,
+                    arguments: [registered_email],
+                }}
+                setMessage={setMessage}
+                reaction={async()=>{
+                    localStorage.setItem(
+                        "auralis-member",
+                        await handleEncryption({details:true})
+                    );
+                    await new Promise((resolve) => setTimeout(resolve, 3000));
                     window.location.reload();
                 }}
             />

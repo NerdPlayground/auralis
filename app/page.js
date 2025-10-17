@@ -9,7 +9,9 @@ export default function Root(){
     const [access_token, refresh_token, expires]=item.split(' | ');
 
     const user_details=useLocalStorage("spotify-user");
-    const [user_id, display_name]=user_details.split(' | ');
+    const [user_id, user_email, display_name]=user_details.split(' | ');
+
+    const auralis_member=useLocalStorage("auralis-member");
 
     const initialState=Object.freeze({
         status: false,
@@ -37,6 +39,8 @@ export default function Root(){
                 item={item!==""}
                 user_details={user_details!==""}
                 user_id={user_id}
+                user_email={user_email}
+                auralis_member={auralis_member}
                 message={message}
                 setMessage={setMessage}
                 results={results?.results}

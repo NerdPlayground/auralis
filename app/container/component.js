@@ -4,11 +4,11 @@ import Message from "@/app/components/message/component";
 import { Dot, useDot } from "./dots";
 import Button from "@/app/components/button/component";
 import useEmblaCarousel from "embla-carousel-react";
-import { addTopTracks, getCurrentlyPlaying, getTopTracks } from "@/app/lib/actions";
+import { addTopTracks, getCurrentlyPlaying, getTopTracks, } from "@/app/lib/actions";
 
 export default function Container({ 
-    item,user_details,user_id,access_token,refresh_token,
-    message,setMessage,results,setResults,setDisplay
+    item,user_details,user_id,user_email,auralis_member,access_token,
+    refresh_token,message,setMessage,results,setResults,setDisplay
 }){
     const [emblaRef,emblaApi]=useEmblaCarousel({});
     const {selectedIndex,scrollSnaps,onDotClick}=useDot(emblaApi);
@@ -35,7 +35,7 @@ export default function Container({
         arguments: [access_token,user_id,results],
     };
 
-    const active=item && user_details && !message.error;
+    const active=item && user_details && auralis_member && !message.error;
 
     return(
         <div className={styles.container}>
@@ -43,6 +43,8 @@ export default function Container({
                 <Auth
                     item={item}
                     user_details={user_details}
+                    registered_email={user_email}
+                    auralis_member={auralis_member}
                     message={message}
                     setMessage={setMessage}
                     access_token={access_token}

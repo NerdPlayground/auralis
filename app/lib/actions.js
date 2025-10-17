@@ -12,7 +12,7 @@ function errorDescription(status,segment=0){
         case 401: return "Your access token has expired. Please get a new one";
         case 403: {switch(segment){
             case 0: return "You can't perform this action. Please contact support";
-            case 1: return "Seems like you aren't registered. We are working on that feature";
+            case 1: return "Seems like you aren't registered. If you have, wait for a slot to be available";
         }}
         case 429: return "You have made too many requests. Please try again later";
         default: return "There was an error in processing your request. Contact support";
@@ -30,6 +30,7 @@ export async function handleDecryption(session){
 export async function handleAuthorization(){
     const SCOPES=Object.freeze([
         "user-top-read",
+        "user-read-email",
         "playlist-modify-private",
         "user-read-currently-playing",
     ]);
@@ -106,6 +107,23 @@ export async function refreshAccessToken(refresh_token){
     }));
 }
 
+export async function joinAuralis(user_email){
+    const response=await fetch(`${process.env.BASE_URL}/api/send`,{
+        method:"POST",
+        headers:{"content-type":"application/json"},
+        body:JSON.stringify({"sender":user_email}),
+    });
+
+    const status=response.status===200;
+    return{
+        success:status,
+        message:(!status?
+            errorDescription(response.status):
+            "Your request has been sent. Time for the waiting game"
+        )
+    };
+}
+
 async function performAction(url,access_token=null,method="GET",content_type="",body={}){
     let headers={};
     if(access_token) headers.Authorization=`Bearer ${access_token}`;
@@ -162,6 +180,7 @@ export async function getUserProfile(access_token){
     return{
         success: true,
         user_id: results?.id,
+        user_email: results?.email,
         display_name: results?.display_name,
     };
 }
