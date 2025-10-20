@@ -7,7 +7,7 @@ function errorDescription(status,segment=0){
     switch(status){
         case 400: {switch(segment){
             case 0: return "The application access has been revoked. Please re-authorize";
-            case 1: return "The request has missing fields. Please contact support";
+            case 1: return "The request has missing or invalid fields. Please contact support";
         }}
         case 401: return "Your access token has expired. Please get a new one";
         case 403: {switch(segment){
@@ -147,7 +147,7 @@ async function performAction(url,access_token=null,method="GET",content_type="",
             console.log(`Description: ${message}`);
             console.log("==================================================");
             
-            const segment=message.includes("Missing")?1:0;
+            const segment=["Missing","Invalid"].some(term=>message.includes(term))?1:0;
             return{
                 success: false, type: `${status}`, segment: segment, 
                 message: errorDescription(status,segment),
