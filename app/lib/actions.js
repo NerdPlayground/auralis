@@ -12,7 +12,7 @@ function errorDescription(status,segment=0){
         case 401: return "Your access token has expired. Please get a new one";
         case 403: {switch(segment){
             case 0: return "You can't perform this action. Please contact support";
-            case 1: return "Seems like you aren't registered. If you have, wait for a slot to be available";
+            case 1: return "Seems like you aren't registered. Please wait for a slot to be available";
         }}
         case 429: return "You have made too many requests. Please try again later";
         default: return "There was an error in processing your request. Contact support";
