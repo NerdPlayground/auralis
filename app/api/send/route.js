@@ -1,8 +1,6 @@
 "use server-only";
-import { Resend } from "resend";
 import Mailjet from "node-mailjet";
 
-const resend=new Resend(process.env.RESEND_API_KEY);
 const mailjet=new Mailjet({
     "apiKey":process.env.MAILJET_API_KEY,
     "apiSecret":process.env.MAILJET_SECRET_KEY,
