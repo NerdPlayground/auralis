@@ -12,6 +12,7 @@ export default function Root(){
     const [user_id, user_email, display_name]=user_details.split(' | ');
 
     const auralis_member=useLocalStorage("auralis-member");
+    const playlist_id=useLocalStorage("playlist-id");
 
     const initialState=Object.freeze({
         status: false,
@@ -44,6 +45,7 @@ export default function Root(){
                 message={message}
                 setMessage={setMessage}
                 results={results?.results}
+                playlist_id={playlist_id}
                 setResults={setResults}
                 setDisplay={setDisplay}
                 access_token={access_token}

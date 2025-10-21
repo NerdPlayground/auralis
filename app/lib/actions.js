@@ -31,7 +31,9 @@ export async function handleAuthorization(){
     const SCOPES=Object.freeze([
         "user-top-read",
         "user-read-email",
+        "playlist-read-private",
         "playlist-modify-private",
+        "playlist-modify-public",
         "user-read-currently-playing",
     ]);
     const ORIGIN=(await headers()).headers.origin;
@@ -211,6 +213,47 @@ export async function getCurrentlyPlaying(access_token){
     return{
         success: true,
         display: getTrackDetails(item),
+    };
+}
+
+async function getTracks(access_token,playlist_id,offset,retrieved){
+    const limit=50;
+    const params=new URLSearchParams();
+    params.append("fields","total,offset,limit,items(track.uri,track.name)");
+    params.append("limit",limit);
+    params.append("offset",offset);
+    const results=await performAction(
+        `https://api.spotify.com/v1/playlists/${playlist_id}/tracks?${params}`,
+        access_token,
+    );
+    if(results?.success===false) return results;
+
+    const total_items=results.items.length;
+    const new_items=[...retrieved,...results.items];
+    if(results.total > total_items && total_items===limit)
+        return getTracks(access_token,playlist_id,offset+limit,new_items);
+    else return new_items;
+}
+
+export async function updateTopTracks(access_token,playlist_id,tracks){
+    let results=await getTracks(access_token,playlist_id,0,[]);
+    if(results?.success===false) return results;
+    
+    const retrieved=results.map(result=>result.track.uri);
+    const filtered=tracks.filter(track=>!retrieved.includes(track));
+    let message="Your Top Tracks have not changed yet. Keep enjoying Spotify";
+    if(filtered.length>=1){
+        const results=await performAction(
+            `https://api.spotify.com/v1/playlists/${playlist_id}/tracks`,
+            access_token,"POST","application/json",filtered
+        );
+        if(results?.success===false) return results;
+        message=`${filtered.length} track${filtered.length===1?' has':'s have'} been added to your playlist. Enjoy :)`
+    }
+
+    return {
+        success: true,
+        message: message,
     };
 }
 

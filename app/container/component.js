@@ -4,36 +4,45 @@ import Message from "@/app/components/message/component";
 import { Dot, useDot } from "./dots";
 import Button from "@/app/components/button/component";
 import useEmblaCarousel from "embla-carousel-react";
-import { addTopTracks, getCurrentlyPlaying, getTopTracks, } from "@/app/lib/actions";
+import { 
+    addTopTracks, getCurrentlyPlaying, getTopTracks, updateTopTracks 
+} from "@/app/lib/actions";
 
 export default function Container({ 
     item,user_details,user_id,user_email,auralis_member,access_token,
-    refresh_token,message,setMessage,results,setResults,setDisplay
+    refresh_token,message,setMessage,results,playlist_id,setResults,setDisplay
 }){
     const [emblaRef,emblaApi]=useEmblaCarousel({});
     const {selectedIndex,scrollSnaps,onDotClick}=useDot(emblaApi);
 
     let menuItems=[
         {
-            icon:"playing",
+            icon: "playing",
             label: "Get Currently Playing",
             method: getCurrentlyPlaying,
             arguments: [access_token],
         },
         {
-            icon:"top",
+            icon: "top",
             label: "Get Your Top Tracks",
             method: getTopTracks,
             arguments: [access_token],
         },
     ];
 
-    if(results) menuItems[1]={
-        icon:"new",
-        label: "Create Top Tracks Playlist",
-        method: addTopTracks,
-        arguments: [access_token,user_id,results],
-    };
+    if(results){
+        menuItems[1]=playlist_id?{
+            icon: "update",
+            label: "Update Top Tracks Playlist",
+            method: updateTopTracks,
+            arguments: [access_token,playlist_id,results],
+        }:{
+            icon: "new",
+            label: "Create Top Tracks Playlist",
+            method: addTopTracks,
+            arguments: [access_token,user_id,results],
+        };
+    }
 
     const active=item && user_details && auralis_member && !message.error;
 
