@@ -15,6 +15,7 @@ function errorDescription(status,segment=0){
             case 1: return "Seems like you aren't registered. Please wait for a slot to be available";
         }}
         case 429: return "You have made too many requests. Please try again later";
+        case 408: return "Looks like you are offline. Please go back online to continue";
         default: return "There was an error in processing your request. Contact support";
     }
 }
@@ -51,41 +52,59 @@ export async function handleAuthorization(){
 }
 
 async function handleAccessToken(body){
-    const 
-        client_id=process.env.CLIENT_ID,
-        client_secret=process.env.CLIENT_SECRET,
-        authorization=new Buffer.from(`${client_id}:${client_secret}`).toString('base64');
-
-    const response=await fetch("https://accounts.spotify.com/api/token",{
-        method: "POST",
-        body: body,
-        headers:{
-            "Authorization":`Basic ${authorization}`,
-            "content-type":"application/x-www-form-urlencoded",
-        },
-    });
-
-    const results=await response.json();
-    if(!response.ok){
-        const {error,error_description}=results;
-        console.log("==================================================");
-        console.log(`Error: ${error}`);
-        console.log(`Description: ${error_description}`);
-        console.log("==================================================");
-        
-        const status=error==="invalid_grant"?400:0;
-        return{
-            success: false, type: `${status}`,
-            segment: "0", message: errorDescription(status),
+    let response={};
+    try{
+        const 
+            client_id=process.env.CLIENT_ID,
+            client_secret=process.env.CLIENT_SECRET,
+            authorization=new Buffer.from(`${client_id}:${client_secret}`).toString('base64');
+    
+        response=await fetch("https://accounts.spotify.com/api/token",{
+            method: "POST",
+            body: body,
+            headers:{
+                "Authorization":`Basic ${authorization}`,
+                "content-type":"application/x-www-form-urlencoded",
+            },
+        });
+    
+        const results=await response.json();
+        if(!response.ok){
+            const {error,error_description}=results;
+            console.log("==================================================");
+            console.log(`Error: ${error}`);
+            console.log(`Description: ${error_description}`);
+            console.log("==================================================");
+            
+            const status=error==="invalid_grant"?400:0;
+            return{
+                success: false, type: `${status}`,
+                segment: "0", message: errorDescription(status),
+            };
+        }
+    
+        return {
+            success: true,
+            access_token: results.access_token,
+            refresh_token: results.refresh_token,
+            expires_in: results.expires_in,
         };
     }
+    catch(error){
+        let 
+            segment=error.name==="TypeError"?0:1,
+            status=error.name==="TypeError"?408:response.status;
+        
+        console.log("==================================================");
+        console.log(`Error: ${status}`);
+        console.log(`${error}`);
+        console.log("==================================================");
 
-    return {
-        success: true,
-        access_token: results.access_token,
-        refresh_token: results.refresh_token,
-        expires_in: results.expires_in,
-    };
+        return{
+            success: false, type: `${status}`,
+            message: errorDescription(status,segment),
+        };
+    }
 }
 
 export async function getAccessToken({code, state}){
@@ -110,38 +129,52 @@ export async function refreshAccessToken(refresh_token){
 }
 
 export async function joinAuralis(user_email){
-    const response=await fetch(`${process.env.BASE_URL}/api/send`,{
-        method:"POST",
-        headers:{"content-type":"application/json"},
-        body:JSON.stringify({"sender":user_email}),
-    });
+    try{
+        const response=await fetch(`${process.env.BASE_URL}/api/send`,{
+            method:"POST",
+            headers:{"content-type":"application/json"},
+            body:JSON.stringify({"sender":user_email}),
+        });
 
-    const status=response.status===200;
-    return{
-        success:status,
-        message:(!status?
-            errorDescription(response.status):
-            "Your request has been sent. Time for the waiting game"
-        )
-    };
+        const status=response.status===200;
+        return{
+            success:status,
+            message:(!status?
+                errorDescription(response.status):
+                "Your request has been sent. Time for the waiting game"
+            )
+        };
+    }
+    catch(error){
+        let status=error.name==="TypeError"?408:0;
+        console.log("==================================================");
+        console.log(`Error: ${status}`);
+        console.log(`${error}`);
+        console.log("==================================================");
+
+        return{
+            success: false, type: `${status}`,
+            message: errorDescription(status),
+        };
+    }
 }
 
 async function performAction(url,access_token=null,method="GET",content_type="",body={}){
-    let headers={};
-    if(access_token) headers.Authorization=`Bearer ${access_token}`;
-    let options={method,headers};
-    if(method==="POST"){
-        options.headers["content-type"]=content_type;
-        options={
-            ...options,
-            body: JSON.stringify(body),
-        };
-    }
-
-    const response=await fetch(url,options);
-    let results=null;
+    let response={};
     try{
-        results=!response.body? null: await response.json();
+        let headers={};
+        if(access_token) headers.Authorization=`Bearer ${access_token}`;
+        let options={method,headers};
+        if(method==="POST"){
+            options.headers["content-type"]=content_type;
+            options={
+                ...options,
+                body: JSON.stringify(body),
+            };
+        }
+
+        response=await fetch(url,options);
+        let results=!response.body? null: await response.json();
         if(!response.ok){
             const {status,message}=results.error;
             console.log("==================================================");
@@ -157,7 +190,10 @@ async function performAction(url,access_token=null,method="GET",content_type="",
         }
     }
     catch(error){
-        const status=response.status;
+        let 
+            segment=error.name==="TypeError"?0:1,
+            status=error.name==="TypeError"?408:response.status;
+        
         console.log("==================================================");
         console.log(`Error: ${status}`);
         console.log(`${error}`);
@@ -165,7 +201,7 @@ async function performAction(url,access_token=null,method="GET",content_type="",
 
         return{
             success: false, type: `${status}`,
-            message: errorDescription(status,1),
+            message: errorDescription(status,segment),
         };
     }
 
