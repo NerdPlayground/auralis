@@ -188,6 +188,7 @@ async function performAction(url,access_token=null,method="GET",content_type="",
                 message: errorDescription(status,segment),
             }
         }
+        return results;
     }
     catch(error){
         let 
