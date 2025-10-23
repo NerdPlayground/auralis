@@ -52,9 +52,9 @@ export default function Container({
         },
     ];
 
-    // if(auralis_member){
-    //     menuItems.shift();
-    // }
+    if(auralis_member){
+        menuItems.shift();
+    }
 
     if(results){
         menuItems[1]=playlist_id?{
