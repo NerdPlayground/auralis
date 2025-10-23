@@ -7,40 +7,70 @@ import useEmblaCarousel from "embla-carousel-react";
 import { 
     addTopTracks, getCurrentlyPlaying, getTopTracks, updateTopTracks 
 } from "@/app/lib/actions";
+import { useState } from "react";
 
 export default function Container({ 
-    item,user_details,user_id,user_email,auralis_member,access_token,
+    item,user_details,user_id,auralis_member,access_token,
     refresh_token,message,setMessage,results,playlist_id,setResults,setDisplay
 }){
+    const [user_email,setEmail]=useState("");
     const [emblaRef,emblaApi]=useEmblaCarousel({});
     const {selectedIndex,scrollSnaps,onDotClick}=useDot(emblaApi);
 
+    function changeInput(event){
+        setEmail(event.target.value);
+    }
+
     let menuItems=[
+        {
+            icon: "send",
+            label: "jdoe@email.com",
+            button: false,
+            element: (
+                <input 
+                    type="email" name="email" id="email" 
+                    placeholder="Enter Your Spotify Email" 
+                    value={user_email} onChange={changeInput}
+                />
+            ),
+        },
         {
             icon: "playing",
             label: "Get Currently Playing",
-            method: getCurrentlyPlaying,
-            arguments: [access_token],
+            action: {
+                method: getCurrentlyPlaying,
+                arguments: [access_token],
+            },
         },
         {
             icon: "top",
             label: "Get Your Top Tracks",
-            method: getTopTracks,
-            arguments: [access_token],
+            action: {
+                method: getTopTracks,
+                arguments: [access_token],
+            },
         },
     ];
+
+    // if(auralis_member){
+    //     menuItems.shift();
+    // }
 
     if(results){
         menuItems[1]=playlist_id?{
             icon: "update",
             label: "Update Top Tracks Playlist",
-            method: updateTopTracks,
-            arguments: [access_token,playlist_id,results],
+            action:{
+                method: updateTopTracks,
+                arguments: [access_token,playlist_id,results],
+            },
         }:{
             icon: "new",
             label: "Create Top Tracks Playlist",
-            method: addTopTracks,
-            arguments: [access_token,user_id,results],
+            action:{
+                method: addTopTracks,
+                arguments: [access_token,user_id,results],
+            },
         };
     }
 
@@ -64,19 +94,18 @@ export default function Container({
                 <div className={styles.embla__container}>{
                     menuItems.map(menuItem=>(
                         <Button
-                            icon={menuItem.icon}
-                            key={menuItem.label}
-                            label={menuItem.label}
-                            action={{
-                                method: menuItem.method,
-                                arguments: [...menuItem.arguments],
-                            }}
+                            icon={menuItem?.icon}
+                            key={menuItem?.label}
+                            label={menuItem?.label}
+                            button={menuItem?.button}
+                            element={menuItem?.element}
+                            action={menuItem?.action}
                             setMessage={setMessage}
                             setDisplay={setDisplay}
                             setResults={setResults}
-                            active={active}
+                            active={menuItem?.active ?? active}
                             classes={{
-                                icon: `${active?"":"grey"}`,
+                                icon: `${menuItem?.active ?? active?"":"grey"}`,
                                 container: styles.embla__slide,
                             }}
                         />

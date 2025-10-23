@@ -8,6 +8,26 @@ export default function Auth({
     message,setMessage,access_token,refresh_token
 }){
     return (
+        (!auralis_member)?(
+            <Button
+                icon={"join"}
+                active={true}
+                label={"Join Others On Auralis"}
+                action={{
+                    method: joinAuralis,
+                    arguments: [registered_email],
+                }}
+                setMessage={setMessage}
+                reaction={async()=>{
+                    localStorage.setItem(
+                        "auralis-member",
+                        await handleEncryption({details:true})
+                    );
+                    await new Promise((resolve) => setTimeout(resolve, 3000));
+                    window.location.reload();
+                }}
+            />
+        ):
         (!item || (message.error && message.type==="400" && message.segment==="0"))?(
             <Button
                 icon={"print"}
@@ -59,26 +79,6 @@ export default function Auth({
                             details:`${user_id} | ${user_email} | ${display_name}`
                         })
                     );
-                    window.location.reload();
-                }}
-            />
-        ):
-        (!auralis_member)?(
-            <Button
-                icon={"join"}
-                active={true}
-                label={"Join Others On Auralis"}
-                action={{
-                    method: joinAuralis,
-                    arguments: [registered_email],
-                }}
-                setMessage={setMessage}
-                reaction={async()=>{
-                    localStorage.setItem(
-                        "auralis-member",
-                        await handleEncryption({details:true})
-                    );
-                    await new Promise((resolve) => setTimeout(resolve, 3000));
                     window.location.reload();
                 }}
             />
