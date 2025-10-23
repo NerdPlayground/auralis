@@ -25,7 +25,7 @@
 }
 
 .message{
-    $size: 16px;
+    $size: 15px;
     padding: 5px;
     @include flex(column,center,center);
     @include noSelect();

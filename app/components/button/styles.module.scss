@@ -24,7 +24,7 @@
             @include dimensions($square:35px);
         }
     }
-    & > button,& > p,& > a{
+    & > button,& > p,& > a, & > input{
         padding: 10px;
         @include dimensions($full-dimension:($button,$bheight));
         @include noSelect();

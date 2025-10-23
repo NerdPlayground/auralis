@@ -7,14 +7,15 @@ function errorDescription(status,segment=0){
     switch(status){
         case 400: {switch(segment){
             case 0: return "The application access has been revoked. Please re-authorize";
-            case 1: return "The request has missing fields. Please contact support";
+            case 1: return "The request has missing or invalid fields. Please contact support";
         }}
         case 401: return "Your access token has expired. Please get a new one";
         case 403: {switch(segment){
             case 0: return "You can't perform this action. Please contact support";
-            case 1: return "Seems like you aren't registered. We are working on that feature";
+            case 1: return "Seems like you aren't registered. Please wait for a slot to be available";
         }}
         case 429: return "You have made too many requests. Please try again later";
+        case 408: return "Looks like you are offline. Please go back online to continue";
         default: return "There was an error in processing your request. Contact support";
     }
 }
@@ -30,7 +31,10 @@ export async function handleDecryption(session){
 export async function handleAuthorization(){
     const SCOPES=Object.freeze([
         "user-top-read",
+        "user-read-email",
+        "playlist-read-private",
         "playlist-modify-private",
+        "playlist-modify-public",
         "user-read-currently-playing",
     ]);
     const ORIGIN=(await headers()).headers.origin;
@@ -48,41 +52,59 @@ export async function handleAuthorization(){
 }
 
 async function handleAccessToken(body){
-    const 
-        client_id=process.env.CLIENT_ID,
-        client_secret=process.env.CLIENT_SECRET,
-        authorization=new Buffer.from(`${client_id}:${client_secret}`).toString('base64');
-
-    const response=await fetch("https://accounts.spotify.com/api/token",{
-        method: "POST",
-        body: body,
-        headers:{
-            "Authorization":`Basic ${authorization}`,
-            "content-type":"application/x-www-form-urlencoded",
-        },
-    });
-
-    const results=await response.json();
-    if(!response.ok){
-        const {error,error_description}=results;
-        console.log("==================================================");
-        console.log(`Error: ${error}`);
-        console.log(`Description: ${error_description}`);
-        console.log("==================================================");
-        
-        const status=error==="invalid_grant"?400:0;
-        return{
-            success: false, type: `${status}`,
-            segment: "0", message: errorDescription(status),
+    let response={};
+    try{
+        const 
+            client_id=process.env.CLIENT_ID,
+            client_secret=process.env.CLIENT_SECRET,
+            authorization=new Buffer.from(`${client_id}:${client_secret}`).toString('base64');
+    
+        response=await fetch("https://accounts.spotify.com/api/token",{
+            method: "POST",
+            body: body,
+            headers:{
+                "Authorization":`Basic ${authorization}`,
+                "content-type":"application/x-www-form-urlencoded",
+            },
+        });
+    
+        const results=await response.json();
+        if(!response.ok){
+            const {error,error_description}=results;
+            console.log("==================================================");
+            console.log(`Error: ${error}`);
+            console.log(`Description: ${error_description}`);
+            console.log("==================================================");
+            
+            const status=error==="invalid_grant"?400:0;
+            return{
+                success: false, type: `${status}`,
+                segment: "0", message: errorDescription(status),
+            };
+        }
+    
+        return {
+            success: true,
+            access_token: results.access_token,
+            refresh_token: results.refresh_token,
+            expires_in: results.expires_in,
         };
     }
+    catch(error){
+        let 
+            segment=error.name==="TypeError"?0:1,
+            status=error.name==="TypeError"?408:response.status;
+        
+        console.log("==================================================");
+        console.log(`Error: ${status}`);
+        console.log(`${error}`);
+        console.log("==================================================");
 
-    return {
-        success: true,
-        access_token: results.access_token,
-        refresh_token: results.refresh_token,
-        expires_in: results.expires_in,
-    };
+        return{
+            success: false, type: `${status}`,
+            message: errorDescription(status,segment),
+        };
+    }
 }
 
 export async function getAccessToken({code, state}){
@@ -106,38 +128,25 @@ export async function refreshAccessToken(refresh_token){
     }));
 }
 
-async function performAction(url,access_token=null,method="GET",content_type="",body={}){
-    let headers={};
-    if(access_token) headers.Authorization=`Bearer ${access_token}`;
-    let options={method,headers};
-    if(method==="POST"){
-        options.headers["content-type"]=content_type;
-        options={
-            ...options,
-            body: JSON.stringify(body),
+export async function joinAuralis(user_email){
+    try{
+        const response=await fetch(`${process.env.BASE_URL}/api/send`,{
+            method:"POST",
+            headers:{"content-type":"application/json"},
+            body:JSON.stringify({"sender":user_email}),
+        });
+
+        const status=response.status===200;
+        return{
+            success:status,
+            message:(!status?
+                errorDescription(response.status):
+                "Your request has been sent. Time for the waiting game"
+            )
         };
     }
-
-    const response=await fetch(url,options);
-    let results=null;
-    try{
-        results=!response.body? null: await response.json();
-        if(!response.ok){
-            const {status,message}=results.error;
-            console.log("==================================================");
-            console.log(`Error: ${status}`);
-            console.log(`Description: ${message}`);
-            console.log("==================================================");
-            
-            const segment=message.includes("Missing")?1:0;
-            return{
-                success: false, type: `${status}`, segment: segment, 
-                message: errorDescription(status,segment),
-            }
-        }
-    }
     catch(error){
-        const status=response.status;
+        let status=error.name==="TypeError"?408:0;
         console.log("==================================================");
         console.log(`Error: ${status}`);
         console.log(`${error}`);
@@ -145,7 +154,54 @@ async function performAction(url,access_token=null,method="GET",content_type="",
 
         return{
             success: false, type: `${status}`,
-            message: errorDescription(status,1),
+            message: errorDescription(status),
+        };
+    }
+}
+
+async function performAction(url,access_token=null,method="GET",content_type="",body={}){
+    let response={};
+    try{
+        let headers={};
+        if(access_token) headers.Authorization=`Bearer ${access_token}`;
+        let options={method,headers};
+        if(method==="POST"){
+            options.headers["content-type"]=content_type;
+            options={
+                ...options,
+                body: JSON.stringify(body),
+            };
+        }
+
+        response=await fetch(url,options);
+        let results=!response.body? null: await response.json();
+        if(!response.ok){
+            const {status,message}=results.error;
+            console.log("==================================================");
+            console.log(`Error: ${status}`);
+            console.log(`Description: ${message}`);
+            console.log("==================================================");
+            
+            const segment=["Missing","Invalid"].some(term=>message.includes(term))?1:0;
+            return{
+                success: false, type: `${status}`, segment: segment, 
+                message: errorDescription(status,segment),
+            }
+        }
+    }
+    catch(error){
+        let 
+            segment=error.name==="TypeError"?0:1,
+            status=error.name==="TypeError"?408:response.status;
+        
+        console.log("==================================================");
+        console.log(`Error: ${status}`);
+        console.log(`${error}`);
+        console.log("==================================================");
+
+        return{
+            success: false, type: `${status}`,
+            message: errorDescription(status,segment),
         };
     }
 
@@ -162,6 +218,7 @@ export async function getUserProfile(access_token){
     return{
         success: true,
         user_id: results?.id,
+        user_email: results?.email,
         display_name: results?.display_name,
     };
 }
@@ -192,6 +249,47 @@ export async function getCurrentlyPlaying(access_token){
     return{
         success: true,
         display: getTrackDetails(item),
+    };
+}
+
+async function getTracks(access_token,playlist_id,offset,retrieved){
+    const limit=50;
+    const params=new URLSearchParams();
+    params.append("fields","total,offset,limit,items(track.uri,track.name)");
+    params.append("limit",limit);
+    params.append("offset",offset);
+    const results=await performAction(
+        `https://api.spotify.com/v1/playlists/${playlist_id}/tracks?${params}`,
+        access_token,
+    );
+    if(results?.success===false) return results;
+
+    const total_items=results.items.length;
+    const new_items=[...retrieved,...results.items];
+    if(results.total > total_items && total_items===limit)
+        return getTracks(access_token,playlist_id,offset+limit,new_items);
+    else return new_items;
+}
+
+export async function updateTopTracks(access_token,playlist_id,tracks){
+    let results=await getTracks(access_token,playlist_id,0,[]);
+    if(results?.success===false) return results;
+    
+    const retrieved=results.map(result=>result.track.uri);
+    const filtered=tracks.filter(track=>!retrieved.includes(track));
+    let message="Your Top Tracks have not changed yet. Keep enjoying Spotify";
+    if(filtered.length>=1){
+        const results=await performAction(
+            `https://api.spotify.com/v1/playlists/${playlist_id}/tracks`,
+            access_token,"POST","application/json",filtered
+        );
+        if(results?.success===false) return results;
+        message=`${filtered.length} track${filtered.length===1?' has':'s have'} been added to your playlist. Enjoy :)`
+    }
+
+    return {
+        success: true,
+        message: message,
     };
 }
 

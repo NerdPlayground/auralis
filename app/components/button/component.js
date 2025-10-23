@@ -44,7 +44,7 @@ export default function Button({
                         
                         if(reaction) reaction(response);
                         setMessage({
-                            content: `${response?.message ?? "Success :)"}`,
+                            content: `${response?.message ?? "••• Success •••"}`,
                             status: true, error: false,
                         });
                         
