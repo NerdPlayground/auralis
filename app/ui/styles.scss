@@ -16,7 +16,9 @@ body{
 }
 
 #root{
+    overflow: auto;
     padding: 25px;
+    padding-bottom: 0px;
     @include flex(column,center,flex-start);
     @include dimensions(100%,1500px,100%,100%);
 }
@@ -42,6 +44,7 @@ $cover: 300px;
 $border: 2px;
 
 #platform,#authorize{
+    margin-bottom: 25px;
     @include flex(column,center,center);
     @include dimensions($full-width:calc(#{$cover} + ((#{$p-padding} + #{$border}) * 2)));
 }
