@@ -1,13 +1,15 @@
 "use server";
+import z, { email } from 'zod';
 import { redirect } from 'next/navigation'
 import { decrypt, encrypt } from './session';
 import { headers } from 'next/headers';
 
-function errorDescription(status,segment=0){
+function errorDescription(status,segment=0,message=null){
     switch(status){
         case 400: {switch(segment){
             case 0: return "The application access has been revoked. Please re-authorize";
             case 1: return "The request has missing or invalid fields. Please contact support";
+            case 2: return message;
         }}
         case 401: return "Your access token has expired. Please get a new one";
         case 403: {switch(segment){
@@ -128,7 +130,28 @@ export async function refreshAccessToken(refresh_token){
     }));
 }
 
+function validateEmail(user_email){
+    const EmailSchema=z.object({
+        email: z.email({
+            message:"Please use your official spotify email. Here's a format; jdoe@example.com"
+        })
+    });
+
+    const validated_data=EmailSchema.safeParse({email:user_email});
+    if(!validated_data.success) return{
+        success: false, type: `${400}`,
+        message: errorDescription(
+            400,2,validated_data.error.issues[0].message
+        ),
+    }
+
+    return { success: true };
+}
+
 export async function joinAuralis(user_email){
+    const validation_response=validateEmail(user_email);
+    if(!validation_response.success) return validation_response;
+
     try{
         const response=await fetch(`${process.env.BASE_URL}/api/send`,{
             method:"POST",
