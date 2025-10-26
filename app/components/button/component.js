@@ -27,17 +27,18 @@ export default function Button({
                 onClick={()=>{
                     startTransition(async ()=>{
                         const args=action?.arguments;
-                        let response=(!args? 
+                        let response=null;
+                        if(action?.method) response=(!args? 
                             await action.method():
                             await action.method(...args)
                         );
                         
-                        if(!response.success){
+                        if(response?.success===false){
                             setMessage({
                                 status: true, error: true,
                                 type: response?.type,
                                 segment: response?.segment,
-                                content: response.message
+                                content: response?.message
                             });
                             return;
                         }

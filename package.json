@@ -14,7 +14,8 @@
     "next": "16.0.0-canary.15",
     "node-mailjet": "^6.0.9",
     "react": "19.0.0-rc-49496d49-20240814",
-    "react-dom": "19.0.0-rc-49496d49-20240814"
+    "react-dom": "19.0.0-rc-49496d49-20240814",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "eslint": "^8",
