@@ -130,6 +130,13 @@ export async function refreshAccessToken(refresh_token){
     }));
 }
 
+export async function removeEmail(){
+    return{
+        success: true,
+        message: "Your email has been deleted. Please provide the updated one to continue"
+    }
+}
+
 function validateEmail(user_email){
     const EmailSchema=z.object({
         email: z.email({

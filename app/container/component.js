@@ -1,3 +1,4 @@
+"use client";
 import styles from "./styles.module.scss";
 import Auth from "@/app/authorize/component";
 import Message from "@/app/components/message/component";
@@ -5,7 +6,7 @@ import { Dot, useDot } from "./dots";
 import Button from "@/app/components/button/component";
 import useEmblaCarousel from "embla-carousel-react";
 import { 
-    addTopTracks, getCurrentlyPlaying, getTopTracks, updateTopTracks 
+    addTopTracks, getCurrentlyPlaying, getTopTracks, removeEmail, updateTopTracks 
 } from "@/app/lib/actions";
 import { useState } from "react";
 
@@ -26,6 +27,7 @@ export default function Container({
             icon: "send",
             label: "jdoe@email.com",
             button: false,
+            active: true,
             element: (
                 <input 
                     type="email" name="email" id="email" 
@@ -50,11 +52,23 @@ export default function Container({
                 arguments: [access_token],
             },
         },
+        {
+            icon: "delete",
+            label: "Remove Your Email",
+            active: true,
+            action: {
+                method: removeEmail,
+            },
+            reaction: async()=>{
+                localStorage.removeItem("auralis-member");
+                await new Promise((resolve) => setTimeout(resolve, 3000));
+                window.location.reload();
+            },
+        },
     ];
 
-    if(auralis_member){
-        menuItems.shift();
-    }
+    if(auralis_member) menuItems.shift();
+    else menuItems.pop();
 
     if(results){
         menuItems[1]=playlist_id?{
@@ -100,6 +114,7 @@ export default function Container({
                             button={menuItem?.button}
                             element={menuItem?.element}
                             action={menuItem?.action}
+                            reaction={menuItem?.reaction}
                             setMessage={setMessage}
                             setDisplay={setDisplay}
                             setResults={setResults}
