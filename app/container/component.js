@@ -6,7 +6,7 @@ import { Dot, useDot } from "./dots";
 import Button from "@/app/components/button/component";
 import useEmblaCarousel from "embla-carousel-react";
 import { 
-    addTopTracks, getCurrentlyPlaying, getTopTracks, removeEmail, updateTopTracks 
+    addTopTracks, getCurrentlyPlaying, getTopTracks, handleEncryption, removeEmail, updateTopTracks 
 } from "@/app/lib/actions";
 import { useState } from "react";
 
@@ -85,6 +85,14 @@ export default function Container({
                 method: addTopTracks,
                 arguments: [access_token,user_id,results],
             },
+            reaction: async(response)=>{
+                localStorage.setItem(
+                    "playlist-id",
+                    await handleEncryption({details:response?.playlist_id})
+                );
+                await new Promise((resolve) => setTimeout(resolve, 3000));
+                window.location.reload();
+            }
         };
     }
 

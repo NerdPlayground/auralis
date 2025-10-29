@@ -368,6 +368,7 @@ export async function addTopTracks(access_token,user_id,tracks){
     if(results?.success===false) return results;
     return{
         success: true,
+        playlist_id: playlist_id,
         message: "Your playlist has been added to your account, enjoy :)",
     }
 }
