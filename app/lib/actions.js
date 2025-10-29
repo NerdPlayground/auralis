@@ -323,10 +323,9 @@ export async function updateTopTracks(access_token,playlist_id,tracks){
 }
 
 export async function getTopTracks(access_token){
-    const quantity=50;
     const params=new URLSearchParams();
     params.append("time_range","long_term");
-    params.append("limit",quantity);
+    params.append("limit",50);
     const results=await performAction(
         `https://api.spotify.com/v1/me/top/tracks?${params}`,
         access_token
@@ -336,7 +335,7 @@ export async function getTopTracks(access_token){
     const tracks=results?.items;
     return{
         success: true,
-        message: `Here are 5 of your top tracks. There are a total of ${quantity}`,
+        message: `Here are 5 of your top tracks. There are a total of ${tracks.length}`,
         results: tracks.map(item=>item.uri),
         sample: tracks.slice(0,5).map(item=>getTrackDetails(item))
     }
